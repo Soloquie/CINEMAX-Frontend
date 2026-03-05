@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CINEMAX - User Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#E11D48",
+                        "background-dark": "#0a0a0c",
+                        "surface-dark": "#141121",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --primary-red: #E11D48;
+        }
+        .glass-card {
+            background: rgba(20, 17, 33, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-slate-100 antialiased overflow-hidden">
+<div class="relative min-h-screen w-full flex items-center justify-center p-6">
+<div class="absolute inset-0 z-0">
+<img alt="Cinematic theater interior" class="w-full h-full object-cover scale-105 blur-sm brightness-[0.3]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc"/>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/60 to-background-dark"></div>
+</div>
+<div class="relative z-10 w-full max-w-[440px]">
+<div class="glass-card rounded-3xl p-8 md:p-10 shadow-2xl">
+<div class="flex flex-col items-center mb-10">
+<div class="flex items-center gap-2 text-primary mb-2">
+<span class="material-symbols-outlined text-4xl font-bold">confirmation_number</span>
+<h1 class="text-3xl font-black tracking-tighter uppercase">CINEMAX</h1>
+</div>
+<p class="text-slate-400 text-sm font-medium">Welcome back to the big screen</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">mail</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600" placeholder="name@example.com" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center ml-1">
+<label class="text-xs font-bold uppercase tracking-widest text-slate-400">Password</label>
+<a class="text-[10px] font-bold text-primary hover:text-primary/80 transition-colors uppercase tracking-wider" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">lock</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-primary/30 active:scale-[0.98]" type="submit">
+                            Sign In
+                        </button>
+</div>
+</form>
+<div class="mt-10 pt-8 border-t border-white/5 text-center">
+<p class="text-slate-400 text-sm">
+                        New to CINEMAX? 
+                        <a class="text-primary font-bold hover:underline ml-1 inline-block" href="#">Create an Account</a>
+</p>
+</div>
+</div>
+<div class="flex items-center justify-center gap-2 mt-8 text-slate-500">
+<span class="material-symbols-outlined text-sm">shield_lock</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.2em]">Secure Ticket Booking System</span>
+</div>
+</div>
+</div>
+
+</body></html>

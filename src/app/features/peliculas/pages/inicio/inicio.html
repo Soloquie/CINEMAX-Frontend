@@ -1,0 +1,327 @@
+<div class="relative flex min-h-screen flex-col overflow-x-hidden">
+  <!-- HEADER -->
+  <header
+    class="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-background-dark/80 backdrop-blur-md px-6 py-4 lg:px-12"
+  >
+    <div class="flex items-center gap-10">
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined text-3xl font-bold">confirmation_number</span>
+        <h2 class="text-2xl font-black tracking-tighter text-slate-100 uppercase">CINEMAX</h2>
+      </div>
+
+      <nav class="hidden lg:flex items-center gap-8">
+        <a class="text-sm font-medium hover:text-primary transition-colors text-primary" href="#">Movies</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Cinemas</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Offers</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Membership</a>
+      </nav>
+    </div>
+
+    <div class="flex flex-1 max-w-2xl mx-8 gap-4">
+      <div class="relative flex-[0.4]">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
+          >location_on</span
+        >
+        <select
+          class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-8 text-sm focus:ring-2 focus:ring-primary/50 text-slate-200 appearance-none cursor-pointer"
+        >
+          <option>Select Cinema</option>
+          <option>Cinemax Downtown</option>
+          <option>Cinemax IMAX Center</option>
+          <option>Cinemax North Mall</option>
+        </select>
+        <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+          >expand_more</span
+        >
+      </div>
+
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input
+          class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500"
+          placeholder="Search movies, genres..."
+          type="text"
+        />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <button class="hidden sm:flex items-center text-slate-100 hover:text-primary transition-colors" type="button">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+
+    <button
+     class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20"
+     type="button"
+     routerLink="/auth/login"
+    >
+    Sign In
+    </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <!-- HERO -->
+    <section class="relative w-full aspect-[21/9] min-h-[550px] flex items-end px-6 py-12 lg:px-16 lg:py-24">
+      <div class="absolute inset-0 z-0">
+        <img
+          class="w-full h-full object-cover"
+          alt="Epic cinematic space battle from a blockbuster movie"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/40 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-background-dark via-transparent to-transparent"></div>
+      </div>
+
+      <div class="relative z-10 max-w-3xl space-y-6">
+        <div class="flex items-center gap-3">
+          <span class="bg-primary text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Now Playing</span>
+          <span
+            class="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase border border-white/30"
+            >PG-13</span
+          >
+          <span class="text-slate-300 text-sm font-medium">Sci-Fi • 2h 46m • IMAX 3D</span>
+        </div>
+
+        <h1 class="text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase">DUNE: PART TWO</h1>
+
+        <p class="text-lg text-slate-300 line-clamp-3">
+          Experience the epic continuation on the biggest screen possible. Paul Atreides unites with Chani and the Fremen
+          while on a warpath of revenge against the conspirators who destroyed his family.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <button
+            class="flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/30"
+            type="button"
+          >
+            <span class="material-symbols-outlined">confirmation_number</span>
+            Buy Tickets
+          </button>
+
+          <button
+            class="flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-white/20 transition-all"
+            type="button"
+          >
+            <span class="material-symbols-outlined">play_circle</span>
+            Trailer
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="space-y-12 py-12 pb-20">
+      <!-- NOW PLAYING -->
+      <section class="px-6 lg:px-12">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center gap-4">
+            <h2 class="text-3xl font-black flex items-center gap-2 uppercase tracking-tighter">Now Playing</h2>
+            <span class="h-1 w-12 bg-primary rounded-full"></span>
+          </div>
+          <a class="text-sm font-bold text-primary hover:underline transition-colors" href="#">View all showtimes</a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <!-- CARD 1 -->
+          <div class="group flex flex-col gap-4">
+            <div
+              class="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl bg-surface-dark group-hover:ring-2 ring-primary transition-all"
+            >
+              <img
+                class="w-full h-full object-cover"
+                alt="Oppenheimer movie poster"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoBPsBpxV3iBXSxitGh4ccbpZ5xgFwbX9T83MFxROoyr8PZhu_osr35aWiAt0mmYJqsrpkjgzFQObH2qU4vgIundKhO0dLy1pi0rALoxWvDUe2lrBNGOAIzbbara_dpD_vPk7SnCxTajX0QkXy2GHTdpcG8yL-487J_MTzmE2XTLbcN7aHGkSSigKSA4L5LSdoaNR0meUZKP9Wc98PdcNzQr_p5NBAWdEiKmG-Al6JWo2zckUHZZw2RViWu4npOGoUiuvl6lQ0en0"
+              />
+              <div class="absolute top-3 left-3 flex flex-col gap-2">
+                <span class="bg-black/80 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded border border-white/10"
+                  >R</span
+                >
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
+                <button
+                  class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined text-sm">confirmation_number</span>
+                  GET TICKETS
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-black text-lg truncate uppercase tracking-tight">Oppenheimer</h3>
+              <div class="flex items-center gap-2 mt-1 mb-3">
+                <span class="text-[10px] font-bold text-primary px-1.5 py-0.5 bg-primary/10 rounded">IMAX</span>
+                <span class="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">2D</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
+                  >14:20</span
+                >
+                <span
+                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
+                  >17:45</span
+                >
+                <span
+                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
+                  >21:00</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2 -->
+          <div class="group flex flex-col gap-4">
+            <div
+              class="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl bg-surface-dark group-hover:ring-2 ring-primary transition-all"
+            >
+              <img
+                class="w-full h-full object-cover"
+                alt="Poor Things movie poster"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwj9TgrWUCHE_TgVx39NYsJU4toIkhGjpIjHc_cZbr4SAR1tCcHyb0kkQ_3iRws3yJr-H5iI_h4HRCT-crefKSj0gkjvhgQBb_WLTHJd7qCpKU1WZvQUcJZBc1YCOCcBOnG8xAlT6SZH5VtFBespmnPkGR6otLV2Jb3h8lYMNak0v12pT1uE8oNoDwbHc-YpeYzVSjLB8QdgF0Kd7d91oG0n4hyY9KGv18QG43KiohsBTNvSjU5mmubYbUBXaPb0zBpa15_qWyPUU"
+              />
+              <div class="absolute top-3 left-3">
+                <span class="bg-black/80 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded border border-white/10"
+                  >R</span
+                >
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
+                <button
+                  class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined text-sm">confirmation_number</span>
+                  GET TICKETS
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-black text-lg truncate uppercase tracking-tight">Poor Things</h3>
+              <div class="flex items-center gap-2 mt-1 mb-3">
+                <span class="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">2D</span>
+                <span class="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">3D</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
+                  >13:00</span
+                >
+                <span
+                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
+                  >18:15</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Puedes pegar más cards aquí si quieres -->
+        </div>
+      </section>
+
+      <!-- COMING SOON -->
+      <section class="px-6 lg:px-12">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center gap-4">
+            <h2 class="text-3xl font-black flex items-center gap-2 uppercase tracking-tighter">Coming Soon</h2>
+            <span class="h-1 w-12 bg-white/20 rounded-full"></span>
+          </div>
+          <a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Full release calendar</a>
+        </div>
+
+        <div class="flex gap-6 overflow-x-auto no-scrollbar pb-4">
+          <div class="flex-none w-56 group">
+            <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 grayscale group-hover:grayscale-0 transition-all duration-500">
+              <img
+                class="w-full h-full object-cover"
+                alt="Shadow Protocol"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzsF15S6G9TIi-eQ0YkUW_gXFxyKsufJ_5YRuc5xtrdXe4_aMQG-jr-fF5GGTKstt53MCB_WlNnTXeqt9i-eJ6waxJG0lhvzkD1lc1H1hbcPsyLxsUu7kw1SMY7Daonzwmtlt_0Nzi7ABfbk0zVTNlyE3-ellolkfsi4iXqxCg7g2Q2AC-Dfo6dMmoabFOEoM1eZslwB9zpEzUdpWvwiKDPFjLcWzu1VebQaVu_175C6R3amun5fVatzOSg8USwF5UAZjNHwj0HDk"
+              />
+              <div class="absolute top-2 right-2">
+                <span class="bg-primary text-[10px] font-black px-2 py-1 rounded">MAR 24</span>
+              </div>
+            </div>
+            <h4 class="font-bold text-sm uppercase tracking-tight truncate">Shadow Protocol</h4>
+            <p class="text-[10px] text-slate-500 font-bold mt-1">TRAILER AVAILABLE</p>
+          </div>
+
+          <div class="flex-none w-56 group">
+            <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 grayscale group-hover:grayscale-0 transition-all duration-500">
+              <img
+                class="w-full h-full object-cover"
+                alt="Core Override"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAG_RAAt_07bw_2t4lISFIMGmXmQdjkLagu-g7HkD4viPY7Tsu5e2i2IgBy4qX9uz6bItgM-U3oal8KHf_TGs8oT2UmzXwl1OqfA1U9hrxMV9IfFBygRk44JJ8gcky36Xn8mIFk_uyMX2Nd9xDeHqXIwB2RGmJAPma3nINh4_n7lTRBmL0rMg-tPUph8pmVnlDE2wWg9Py71ydZxf9eoT1sFyqycAgzpFBVUy4CkVaHl5F7JgxPoxMEHtygHpEwt1GCKzuM1TGo5Y"
+              />
+              <div class="absolute top-2 right-2">
+                <span class="bg-primary text-[10px] font-black px-2 py-1 rounded">APR 12</span>
+              </div>
+            </div>
+            <h4 class="font-bold text-sm uppercase tracking-tight truncate">Core Override</h4>
+            <p class="text-[10px] text-slate-500 font-bold mt-1">TICKETS SOON</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-surface-dark px-6 py-12 lg:px-12 border-t border-white/5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+      <div class="col-span-2">
+        <div class="flex items-center gap-2 text-primary mb-6">
+          <span class="material-symbols-outlined text-3xl font-bold">confirmation_number</span>
+          <h2 class="text-2xl font-black tracking-tighter text-slate-100 uppercase">CINEMAX</h2>
+        </div>
+
+        <p class="text-slate-400 max-w-sm mb-6">
+          Your premier destination for the cinematic experience. Book tickets, choose your seats, and enjoy the latest
+          blockbusters in state-of-the-art theaters.
+        </p>
+
+        <div class="flex gap-4">
+          <a class="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors" href="#">
+            <span class="material-symbols-outlined">social_leaderboard</span>
+          </a>
+          <a class="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors" href="#">
+            <span class="material-symbols-outlined">alternate_email</span>
+          </a>
+          <a class="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors" href="#">
+            <span class="material-symbols-outlined">smart_display</span>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4 text-slate-100">Booking</h4>
+        <ul class="space-y-2 text-sm text-slate-400">
+          <li><a class="hover:text-primary transition-colors" href="#">Now Playing</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Coming Soon</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Cinemas Near Me</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Group Bookings</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4 text-slate-100">Company</h4>
+        <ul class="space-y-2 text-sm text-slate-400">
+          <li><a class="hover:text-primary transition-colors" href="#">About CINEMAX</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <p>© 2024 CINEMAX Theaters Group. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a class="hover:text-slate-300" href="#">Refund Policy</a>
+        <a class="hover:text-slate-300" href="#">Cinema Safety</a>
+      </div>
+    </div>
+  </footer>
+</div>

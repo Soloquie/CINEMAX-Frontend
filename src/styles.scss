@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@use "tailwindcss";
+
+/* dark mode por clase  */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* colores y fuente  */
+@theme {
+  --color-primary: #E11D48;
+  --color-accent-gold: #FFD700;
+
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #0a0a0c;
+  --color-surface-dark: #141121;
+
+  --font-display: "Spline Sans", sans-serif;
+
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.movie-card:hover .overlay { opacity: 1; }
+:root { --primary-red: #E11D48; }
