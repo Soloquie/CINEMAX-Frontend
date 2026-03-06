@@ -1,0 +1,62 @@
+<div class="relative min-h-screen w-full flex items-center justify-center p-6 bg-background-dark font-display text-slate-100 antialiased overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img
+      alt="Cinematic theater interior"
+      class="w-full h-full object-cover scale-105 blur-md brightness-[0.2]"
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/80 to-background-dark"></div>
+  </div>
+
+  <div class="relative z-10 w-full max-w-[480px]">
+    <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl text-center">
+      <div class="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border border-primary/20">
+        <span class="material-symbols-outlined text-primary text-5xl">lock_person</span>
+      </div>
+
+      <div class="space-y-4 mb-10">
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase">Too Many Failed Attempts</h1>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-sm mx-auto">
+          For your security, your account access has been temporarily suspended. Please wait before trying again.
+        </p>
+      </div>
+
+      <div class="bg-white/5 border border-white/10 rounded-2xl py-6 px-4 mb-10">
+        <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2">Cooling Down Period</p>
+        <div class="text-5xl font-mono font-medium text-white tracking-widest">
+          {{ countdown }}
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <button
+          class="w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all"
+          [disabled]="!canGoBack"
+          [ngClass]="canGoBack ? 'bg-primary text-white hover:bg-primary/90' : 'bg-slate-800 text-slate-500 cursor-not-allowed'"
+          type="button"
+          (click)="goBack()"
+        >
+          Back to Login
+        </button>
+
+        <div class="pt-4 border-t border-white/5">
+          <p class="text-slate-400 text-sm">
+            Back to home?
+            <a class="text-primary font-bold hover:underline ml-1 inline-block" href="#">Home</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center justify-center gap-4 mt-8">
+      <div class="flex items-center gap-2 opacity-50">
+        <span class="material-symbols-outlined text-2xl">confirmation_number</span>
+        <span class="text-xl font-black tracking-tighter uppercase">CINEMAX</span>
+      </div>
+      <div class="flex items-center gap-2 text-slate-500">
+        <span class="material-symbols-outlined text-sm">shield_lock</span>
+        <span class="text-[10px] font-bold uppercase tracking-[0.2em]">Security Protocol Active</span>
+      </div>
+    </div>
+  </div>
+</div>
