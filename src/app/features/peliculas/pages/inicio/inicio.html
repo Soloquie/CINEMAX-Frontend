@@ -18,57 +18,126 @@
     </div>
 
     <div class="flex flex-1 max-w-2xl mx-8 gap-4">
+      <!-- CINES -->
       <div class="relative flex-[0.4]">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
           >location_on</span
         >
         <select
           class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-8 text-sm focus:ring-2 focus:ring-primary/50 text-slate-200 appearance-none cursor-pointer"
+          [(ngModel)]="selectedCineId"
+          (change)="onCineChange()"
         >
-          <option>Select Cinema</option>
-          <option>Cinemax Downtown</option>
-          <option>Cinemax IMAX Center</option>
-          <option>Cinemax North Mall</option>
+          <option [ngValue]="null">Select Cinema</option>
+          <option *ngFor="let c of cines" [ngValue]="c.id">
+            {{ c.nombre }}{{ c.ciudad ? ' • ' + c.ciudad : '' }}
+          </option>
         </select>
-        <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+        <span
+          class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
           >expand_more</span
         >
       </div>
 
+      <!-- SEARCH -->
       <div class="relative flex-1">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
         <input
-          class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500"
-          placeholder="Search movies, genres..."
-          type="text"
+          #q
+            class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500"
+            placeholder="Search movies..."
+            type="text"
+            [value]="query"
+            (input)="onSearchInput(q.value)"
         />
       </div>
     </div>
 
+    <!-- RIGHT -->
     <div class="flex items-center gap-6">
-      <button class="hidden sm:flex items-center text-slate-100 hover:text-primary transition-colors" type="button">
-        <span class="material-symbols-outlined">notifications</span>
+      <!-- Carrito -->
+      <button
+        class="hidden sm:flex items-center text-slate-100 hover:text-primary transition-colors"
+        type="button"
+        (click)="onCartClick()"
+        title="Carrito"
+      >
+        <span class="material-symbols-outlined">shopping_cart</span>
       </button>
 
-    <button
-     class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20"
-     type="button"
-     routerLink="/auth/login"
-    >
-    Sign In
-    </button>
+      <!-- No logueado -->
+      <button
+        *ngIf="!isLoggedIn()"
+        class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20"
+        type="button"
+        routerLink="/auth/login"
+      >
+        Sign In
+      </button>
+
+      <!-- Logueado: dropdown -->
+      <div *ngIf="isLoggedIn()" id="user-menu" class="relative">
+        <button
+          type="button"
+          (click)="toggleMenu()"
+          class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all"
+        >
+          <span class="material-symbols-outlined text-lg">account_circle</span>
+          <span class="max-w-[160px] truncate">
+            {{ (userMe?.nombre || userSummary?.nombre || 'Usuario') }}
+          </span>
+          <span class="material-symbols-outlined text-lg">expand_more</span>
+        </button>
+
+        <div
+          *ngIf="menuOpen"
+          class="absolute right-0 mt-2 w-72 rounded-xl bg-surface-dark border border-white/10 shadow-2xl overflow-hidden z-50"
+        >
+          <div class="p-4 border-b border-white/10">
+            <p class="font-black text-slate-100 truncate">
+              {{ (userMe?.nombre || userSummary?.nombre || '') }} {{ (userMe?.apellido || userSummary?.apellido || '') }}
+            </p>
+            <p class="text-xs text-slate-400 truncate">{{ userMe?.email || userSummary?.email }}</p>
+            <p class="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">
+              Roles: {{ (userMe?.roles || userSummary?.roles || []).join(', ') }}
+            </p>
+          </div>
+
+          <div class="p-2">
+            
+            <button
+              *ngIf="isAdmin()"
+              type="button"
+              (click)="goAdminPanel()"
+              class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm font-bold text-slate-200"
+            >
+              <span class="material-symbols-outlined align-middle text-base mr-2">admin_panel_settings</span>
+              Panel de administración
+            </button>
+            <button
+              type="button"
+              (click)="logout()"
+              class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm font-bold text-slate-200"
+            >
+            
+              <span class="material-symbols-outlined align-middle text-base mr-2">logout</span>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
   <!-- MAIN -->
   <main class="flex-1">
-    <!-- HERO -->
+    <!-- HERO (usa la primera película en cartelera si existe) -->
     <section class="relative w-full aspect-[21/9] min-h-[550px] flex items-end px-6 py-12 lg:px-16 lg:py-24">
       <div class="absolute inset-0 z-0">
         <img
           class="w-full h-full object-cover"
-          alt="Epic cinematic space battle from a blockbuster movie"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc"
+          [alt]="heroMovie?.titulo || 'CINEMAX'"
+          [src]="heroMovie?.posterUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc'"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/40 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-background-dark via-transparent to-transparent"></div>
@@ -78,17 +147,19 @@
         <div class="flex items-center gap-3">
           <span class="bg-primary text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Now Playing</span>
           <span
+            *ngIf="heroMovie?.clasificacion"
             class="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase border border-white/30"
-            >PG-13</span
           >
-          <span class="text-slate-300 text-sm font-medium">Sci-Fi • 2h 46m • IMAX 3D</span>
+            {{ heroMovie?.clasificacion }}
+          </span>
         </div>
 
-        <h1 class="text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase">DUNE: PART TWO</h1>
+        <h1 class="text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase">
+          {{ heroMovie?.titulo || 'CINEMAX' }}
+        </h1>
 
         <p class="text-lg text-slate-300 line-clamp-3">
-          Experience the epic continuation on the biggest screen possible. Paul Atreides unites with Chani and the Fremen
-          while on a warpath of revenge against the conspirators who destroyed his family.
+          {{ errorMsg ? errorMsg : 'Explora la cartelera y compra tus entradas.' }}
         </p>
 
         <div class="flex flex-wrap gap-4">
@@ -119,26 +190,31 @@
             <h2 class="text-3xl font-black flex items-center gap-2 uppercase tracking-tighter">Now Playing</h2>
             <span class="h-1 w-12 bg-primary rounded-full"></span>
           </div>
-          <a class="text-sm font-bold text-primary hover:underline transition-colors" href="#">View all showtimes</a>
+          <span class="text-sm font-bold text-slate-400" *ngIf="loading">Loading...</span>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          <!-- CARD 1 -->
-          <div class="group flex flex-col gap-4">
+          <div *ngFor="let movie of nowPlaying" class="group flex flex-col gap-4">
             <div
               class="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl bg-surface-dark group-hover:ring-2 ring-primary transition-all"
             >
               <img
                 class="w-full h-full object-cover"
-                alt="Oppenheimer movie poster"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoBPsBpxV3iBXSxitGh4ccbpZ5xgFwbX9T83MFxROoyr8PZhu_osr35aWiAt0mmYJqsrpkjgzFQObH2qU4vgIundKhO0dLy1pi0rALoxWvDUe2lrBNGOAIzbbara_dpD_vPk7SnCxTajX0QkXy2GHTdpcG8yL-487J_MTzmE2XTLbcN7aHGkSSigKSA4L5LSdoaNR0meUZKP9Wc98PdcNzQr_p5NBAWdEiKmG-Al6JWo2zckUHZZw2RViWu4npOGoUiuvl6lQ0en0"
+                [alt]="movie.titulo"
+                [src]="movie.posterUrl || 'https://via.placeholder.com/400x600?text=CINEMAX'"
               />
+
               <div class="absolute top-3 left-3 flex flex-col gap-2">
-                <span class="bg-black/80 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded border border-white/10"
-                  >R</span
+                <span
+                  *ngIf="movie.clasificacion"
+                  class="bg-black/80 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded border border-white/10"
                 >
+                  {{ movie.clasificacion }}
+                </span>
               </div>
+
               <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+
               <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
                 <button
                   class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -151,75 +227,30 @@
             </div>
 
             <div>
-              <h3 class="font-black text-lg truncate uppercase tracking-tight">Oppenheimer</h3>
-              <div class="flex items-center gap-2 mt-1 mb-3">
-                <span class="text-[10px] font-bold text-primary px-1.5 py-0.5 bg-primary/10 rounded">IMAX</span>
-                <span class="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">2D</span>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
-                  >14:20</span
-                >
-                <span
-                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
-                  >17:45</span
-                >
-                <span
-                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
-                  >21:00</span
-                >
+              <h3 class="font-black text-lg truncate uppercase tracking-tight">{{ movie.titulo }}</h3>
+
+              <div class="flex flex-wrap gap-2 mt-2">
+                <ng-container *ngIf="getTimesFor(movie.id).length > 0; else noTimes">
+                  <span
+                    *ngFor="let t of getTimesFor(movie.id)"
+                    class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
+                  >
+                    {{ t }}
+                  </span>
+                </ng-container>
+
+                <ng-template #noTimes>
+                  <span class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-500">
+                    Sin funciones hoy
+                  </span>
+                </ng-template>
               </div>
             </div>
           </div>
 
-          <!-- CARD 2 -->
-          <div class="group flex flex-col gap-4">
-            <div
-              class="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl bg-surface-dark group-hover:ring-2 ring-primary transition-all"
-            >
-              <img
-                class="w-full h-full object-cover"
-                alt="Poor Things movie poster"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwj9TgrWUCHE_TgVx39NYsJU4toIkhGjpIjHc_cZbr4SAR1tCcHyb0kkQ_3iRws3yJr-H5iI_h4HRCT-crefKSj0gkjvhgQBb_WLTHJd7qCpKU1WZvQUcJZBc1YCOCcBOnG8xAlT6SZH5VtFBespmnPkGR6otLV2Jb3h8lYMNak0v12pT1uE8oNoDwbHc-YpeYzVSjLB8QdgF0Kd7d91oG0n4hyY9KGv18QG43KiohsBTNvSjU5mmubYbUBXaPb0zBpa15_qWyPUU"
-              />
-              <div class="absolute top-3 left-3">
-                <span class="bg-black/80 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded border border-white/10"
-                  >R</span
-                >
-              </div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
-                <button
-                  class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  type="button"
-                >
-                  <span class="material-symbols-outlined text-sm">confirmation_number</span>
-                  GET TICKETS
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="font-black text-lg truncate uppercase tracking-tight">Poor Things</h3>
-              <div class="flex items-center gap-2 mt-1 mb-3">
-                <span class="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">2D</span>
-                <span class="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">3D</span>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
-                  >13:00</span
-                >
-                <span
-                  class="text-xs font-bold py-1 px-2 bg-surface-dark border border-white/5 rounded text-slate-300 hover:border-primary cursor-pointer transition-colors"
-                  >18:15</span
-                >
-              </div>
-            </div>
+          <div *ngIf="!loading && nowPlaying.length === 0" class="text-slate-400 font-bold">
+            No hay películas en cartelera para mostrar.
           </div>
-
-          <!-- Puedes pegar más cards aquí si quieres -->
         </div>
       </section>
 
@@ -230,38 +261,19 @@
             <h2 class="text-3xl font-black flex items-center gap-2 uppercase tracking-tighter">Coming Soon</h2>
             <span class="h-1 w-12 bg-white/20 rounded-full"></span>
           </div>
-          <a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Full release calendar</a>
         </div>
 
         <div class="flex gap-6 overflow-x-auto no-scrollbar pb-4">
-          <div class="flex-none w-56 group">
+          <div *ngFor="let movie of comingSoon" class="flex-none w-56 group">
             <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 grayscale group-hover:grayscale-0 transition-all duration-500">
               <img
                 class="w-full h-full object-cover"
-                alt="Shadow Protocol"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzsF15S6G9TIi-eQ0YkUW_gXFxyKsufJ_5YRuc5xtrdXe4_aMQG-jr-fF5GGTKstt53MCB_WlNnTXeqt9i-eJ6waxJG0lhvzkD1lc1H1hbcPsyLxsUu7kw1SMY7Daonzwmtlt_0Nzi7ABfbk0zVTNlyE3-ellolkfsi4iXqxCg7g2Q2AC-Dfo6dMmoabFOEoM1eZslwB9zpEzUdpWvwiKDPFjLcWzu1VebQaVu_175C6R3amun5fVatzOSg8USwF5UAZjNHwj0HDk"
+                [alt]="movie.titulo"
+                [src]="movie.posterUrl || 'https://via.placeholder.com/400x600?text=CINEMAX'"
               />
-              <div class="absolute top-2 right-2">
-                <span class="bg-primary text-[10px] font-black px-2 py-1 rounded">MAR 24</span>
-              </div>
             </div>
-            <h4 class="font-bold text-sm uppercase tracking-tight truncate">Shadow Protocol</h4>
-            <p class="text-[10px] text-slate-500 font-bold mt-1">TRAILER AVAILABLE</p>
-          </div>
-
-          <div class="flex-none w-56 group">
-            <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 grayscale group-hover:grayscale-0 transition-all duration-500">
-              <img
-                class="w-full h-full object-cover"
-                alt="Core Override"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAG_RAAt_07bw_2t4lISFIMGmXmQdjkLagu-g7HkD4viPY7Tsu5e2i2IgBy4qX9uz6bItgM-U3oal8KHf_TGs8oT2UmzXwl1OqfA1U9hrxMV9IfFBygRk44JJ8gcky36Xn8mIFk_uyMX2Nd9xDeHqXIwB2RGmJAPma3nINh4_n7lTRBmL0rMg-tPUph8pmVnlDE2wWg9Py71ydZxf9eoT1sFyqycAgzpFBVUy4CkVaHl5F7JgxPoxMEHtygHpEwt1GCKzuM1TGo5Y"
-              />
-              <div class="absolute top-2 right-2">
-                <span class="bg-primary text-[10px] font-black px-2 py-1 rounded">APR 12</span>
-              </div>
-            </div>
-            <h4 class="font-bold text-sm uppercase tracking-tight truncate">Core Override</h4>
-            <p class="text-[10px] text-slate-500 font-bold mt-1">TICKETS SOON</p>
+            <h4 class="font-bold text-sm uppercase tracking-tight truncate">{{ movie.titulo }}</h4>
+            <p class="text-[10px] text-slate-500 font-bold mt-1">COMING SOON</p>
           </div>
         </div>
       </section>
@@ -281,18 +293,6 @@
           Your premier destination for the cinematic experience. Book tickets, choose your seats, and enjoy the latest
           blockbusters in state-of-the-art theaters.
         </p>
-
-        <div class="flex gap-4">
-          <a class="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors" href="#">
-            <span class="material-symbols-outlined">social_leaderboard</span>
-          </a>
-          <a class="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors" href="#">
-            <span class="material-symbols-outlined">alternate_email</span>
-          </a>
-          <a class="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors" href="#">
-            <span class="material-symbols-outlined">smart_display</span>
-          </a>
-        </div>
       </div>
 
       <div>

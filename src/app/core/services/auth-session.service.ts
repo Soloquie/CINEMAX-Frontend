@@ -9,7 +9,7 @@ const USER_KEY = 'cinemax_user';
 export class AuthSessionService {
 
   saveAuth(auth: AuthResponseDTO): void {
-    localStorage.setItem(TOKEN_KEY, auth.token);
+    localStorage.setItem(TOKEN_KEY, auth.accessToken);      // ✅
     localStorage.setItem(TOKEN_TYPE_KEY, auth.tokenType || 'Bearer');
     localStorage.setItem(USER_KEY, JSON.stringify(auth.user));
   }
@@ -34,6 +34,7 @@ export class AuthSessionService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const t = this.getToken();
+    return !!t && t !== 'undefined' && t !== 'null';
   }
 }

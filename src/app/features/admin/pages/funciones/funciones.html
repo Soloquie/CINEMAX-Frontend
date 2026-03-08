@@ -1,0 +1,285 @@
+<header class="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-surface-dark/30 backdrop-blur-sm">
+  <h1 class="text-xl font-bold">Showtimes (Funciones)</h1>
+
+  <div class="flex items-center gap-3">
+    <div class="relative">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+      <input
+        class="bg-surface-dark border border-white/5 rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary focus:border-primary"
+        placeholder="Search movie or cinema..."
+        type="text"
+        [value]="q"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </div>
+
+    <button
+      class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20"
+      type="button"
+      (click)="openCreate()"
+    >
+      <span class="material-symbols-outlined text-lg">add_circle</span>
+      Add Showtime
+    </button>
+  </div>
+</header>
+
+<div class="flex-1 overflow-auto p-8">
+  <p *ngIf="errorMsg" class="text-red-400 font-bold mb-4">{{ errorMsg }}</p>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap items-center gap-4 mb-6">
+    <div class="flex items-center gap-2 bg-surface-dark px-3 py-1.5 rounded-lg border border-white/5">
+      <span class="text-xs font-bold text-slate-500 uppercase">Cinema:</span>
+      <select
+        class="bg-transparent border-none text-xs font-bold text-slate-200 focus:ring-0 p-0 cursor-pointer"
+        (change)="onCineFilter($any($event.target).value)"
+      >
+        <option value="ALL">All</option>
+        <option *ngFor="let c of cines" [value]="c.id">{{ c.nombre }}</option>
+      </select>
+    </div>
+
+    <div class="flex items-center gap-2 bg-surface-dark px-3 py-1.5 rounded-lg border border-white/5">
+      <span class="text-xs font-bold text-slate-500 uppercase">Movie:</span>
+      <select
+        class="bg-transparent border-none text-xs font-bold text-slate-200 focus:ring-0 p-0 cursor-pointer"
+        (change)="onPeliculaFilter($any($event.target).value)"
+      >
+        <option value="ALL">All</option>
+        <option *ngFor="let p of peliculas" [value]="p.id">{{ p.titulo }}</option>
+      </select>
+    </div>
+
+    <div class="ml-auto text-xs text-slate-500">
+      Showing <span class="text-slate-200 font-bold">{{ filtered.length }}</span> of
+      <span class="text-slate-200 font-bold">{{ funciones.length }}</span> showtimes
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-surface-dark border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+    <table class="w-full text-left">
+      <thead class="bg-white/5 border-b border-white/5">
+        <tr>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-24">Poster</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Movie</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Cinema / Room</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Start</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Lang</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Price</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-white/5">
+        <tr *ngFor="let f of filtered" class="hover:bg-white/[0.02] transition-colors">
+          <td class="px-6 py-4">
+            <div class="w-12 h-16 rounded overflow-hidden bg-background-dark border border-white/10 shadow-lg">
+              <img
+                [alt]="f.peliculaTitulo"
+                class="w-full h-full object-cover"
+                [src]="f.posterUrl || 'https://via.placeholder.com/120x160?text=CINEMAX'"
+              />
+            </div>
+          </td>
+
+          <td class="px-6 py-4">
+            <div class="font-bold text-slate-100 uppercase tracking-tight">{{ f.peliculaTitulo }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">ID: {{ f.id }}</div>
+          </td>
+
+          <td class="px-6 py-4 text-sm text-slate-300">
+            <div class="font-bold text-slate-200">{{ f.cineNombre }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Room: {{ f.salaNombre }}</div>
+          </td>
+
+          <td class="px-6 py-4 text-sm text-slate-300">
+            {{ (f.inicio || '').replace('T',' ') }}
+          </td>
+
+          <td class="px-6 py-4 text-sm text-slate-300">
+            <span class="text-[10px] font-black px-2 py-0.5 rounded uppercase border border-white/10 bg-white/5">
+              {{ f.idioma || '—' }}
+            </span>
+            <span
+              *ngIf="f.subtitulos"
+              class="ml-2 text-[10px] font-black px-2 py-0.5 rounded uppercase border border-primary/20 bg-primary/10 text-primary"
+            >
+              SUB
+            </span>
+          </td>
+
+          <td class="px-6 py-4 text-sm text-slate-300">
+            $ {{ formatMoney(f.precioBase) }}
+          </td>
+
+          <td class="px-6 py-4">
+            <span class="text-[10px] font-black px-2 py-0.5 rounded uppercase border border-white/10 bg-white/5 text-slate-300">
+              {{ f.estado || '—' }}
+            </span>
+          </td>
+
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg" (click)="openEdit(f)">
+                <span class="material-symbols-outlined text-lg">edit</span>
+              </button>
+
+              <button class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg" (click)="cancelar(f)">
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && filtered.length === 0">
+          <td colspan="8" class="px-6 py-6 text-slate-500 font-bold">
+            No showtimes found.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL -->
+  <div *ngIf="modalOpen" class="fixed inset-0 z-50 bg-black/70 overflow-y-auto">
+    <div class="min-h-full flex items-start justify-center p-6">
+      <div class="w-full max-w-3xl bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <h2 class="text-lg font-black">
+            {{ editingId ? 'Edit Showtime' : 'Add Showtime' }}
+          </h2>
+
+          <button class="text-slate-400 hover:text-white" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Modal general error -->
+        <div
+          *ngIf="modalErrorMsg"
+          class="mx-6 mt-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-red-300 font-bold text-sm"
+        >
+          {{ modalErrorMsg }}
+        </div>
+
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto max-h-[70vh]">
+          <!-- Movie -->
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Movie</label>
+            <select
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [ngClass]="fieldErrors['peliculaId'] ? 'ring-2 ring-red-500/40 border-red-500/40' : ''"
+              [(ngModel)]="form.peliculaId"
+            >
+              <option [ngValue]="0">Select movie</option>
+              <option *ngFor="let p of peliculas" [ngValue]="p.id">{{ p.titulo }}</option>
+            </select>
+            <p *ngIf="fieldErrors['peliculaId']" class="mt-2 text-xs font-bold text-red-400">{{ fieldErrors['peliculaId'] }}</p>
+          </div>
+
+          <!-- Cinema -->
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Cinema</label>
+            <select
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [ngClass]="fieldErrors['cineId'] ? 'ring-2 ring-red-500/40 border-red-500/40' : ''"
+              [ngModel]="form.cineId"
+              (ngModelChange)="onCineChangeInForm($event)"
+            >
+              <option [ngValue]="0">Select cinema</option>
+              <option *ngFor="let c of cines" [ngValue]="c.id">{{ c.nombre }}</option>
+            </select>
+            <p *ngIf="fieldErrors['cineId']" class="mt-2 text-xs font-bold text-red-400">{{ fieldErrors['cineId'] }}</p>
+          </div>
+
+          <!-- Room -->
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Room</label>
+            <select
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [ngClass]="fieldErrors['salaId'] ? 'ring-2 ring-red-500/40 border-red-500/40' : ''"
+              [(ngModel)]="form.salaId"
+            >
+              <option [ngValue]="0">
+                {{ salasLoading ? 'Loading rooms...' : 'Select room' }}
+              </option>
+
+              <option *ngFor="let s of salas" [ngValue]="s.id">
+                {{ s.nombre }} ({{ s.tipo }})
+              </option>
+            </select>
+
+            <p *ngIf="salasError" class="mt-2 text-xs font-bold text-red-400">{{ salasError }}</p>
+            <p *ngIf="fieldErrors['salaId']" class="mt-2 text-xs font-bold text-red-400">{{ fieldErrors['salaId'] }}</p>
+          </div>
+
+          <!-- Start -->
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Start</label>
+            <input
+              type="datetime-local"
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [ngClass]="fieldErrors['inicioLocal'] ? 'ring-2 ring-red-500/40 border-red-500/40' : ''"
+              [(ngModel)]="form.inicioLocal"
+            />
+            <p *ngIf="fieldErrors['inicioLocal']" class="mt-2 text-xs font-bold text-red-400">{{ fieldErrors['inicioLocal'] }}</p>
+            <p class="text-[11px] text-slate-500 mt-2">El backend requiere segundos; se envía automáticamente con :00.</p>
+          </div>
+
+          <!-- End -->
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">End (optional)</label>
+            <input
+              type="datetime-local"
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [ngClass]="fieldErrors['finLocal'] ? 'ring-2 ring-red-500/40 border-red-500/40' : ''"
+              [(ngModel)]="form.finLocal"
+            />
+            <p *ngIf="fieldErrors['finLocal']" class="mt-2 text-xs font-bold text-red-400">{{ fieldErrors['finLocal'] }}</p>
+          </div>
+
+          <!-- Language -->
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Language</label>
+            <input
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [(ngModel)]="form.idioma"
+              placeholder="ES / EN"
+            />
+          </div>
+
+          <!-- Subs -->
+          <div class="flex items-center gap-2 mt-7">
+            <input type="checkbox" [(ngModel)]="form.subtitulos" />
+            <span class="text-sm font-bold text-slate-300">Subtitles</span>
+          </div>
+
+          <!-- Price -->
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Base Price</label>
+            <input
+              type="number"
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [ngClass]="fieldErrors['precioBase'] ? 'ring-2 ring-red-500/40 border-red-500/40' : ''"
+              [(ngModel)]="form.precioBase"
+            />
+            <p *ngIf="fieldErrors['precioBase']" class="mt-2 text-xs font-bold text-red-400">{{ fieldErrors['precioBase'] }}</p>
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-surface-dark/60">
+          <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 font-bold" type="button" (click)="closeModal()">
+            Cancel
+          </button>
+
+          <button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 font-bold text-white" type="button" (click)="save()">
+            {{ editingId ? 'Save Changes' : 'Create Showtime' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

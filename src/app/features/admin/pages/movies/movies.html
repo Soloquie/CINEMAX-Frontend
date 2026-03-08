@@ -1,0 +1,306 @@
+<header class="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-surface-dark/30 backdrop-blur-sm">
+  <h1 class="text-xl font-bold">Manage Movies</h1>
+
+  <div class="flex items-center gap-4">
+    <div class="relative">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+      <input
+        class="bg-surface-dark border border-white/5 rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary focus:border-primary"
+        placeholder="Search across database..."
+        type="text"
+        [value]="search"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </div>
+
+    <button
+      class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20"
+      type="button"
+      (click)="openCreate()"
+    >
+      <span class="material-symbols-outlined text-lg">add_circle</span>
+      Add New Movie
+    </button>
+  </div>
+</header>
+
+<div class="flex-1 overflow-auto p-8">
+  <p *ngIf="errorMsg" class="text-red-400 font-bold mb-4">{{ errorMsg }}</p>
+
+  <div class="flex flex-wrap items-center gap-4 mb-6">
+    <div class="flex items-center gap-2 bg-surface-dark px-3 py-1.5 rounded-lg border border-white/5">
+      <span class="text-xs font-bold text-slate-500 uppercase">Status:</span>
+      <select
+        class="bg-transparent border-none text-xs font-bold text-slate-200 focus:ring-0 p-0 cursor-pointer"
+        (change)="onStatusFilter($any($event.target).value)"
+      >
+        <option value="ALL">All Status</option>
+        <option value="NOW">Now Playing</option>
+        <option value="SOON">Coming Soon</option>
+      </select>
+    </div>
+
+    <div class="ml-auto text-xs text-slate-500">
+      Showing <span class="text-slate-200 font-bold">{{ filtered.length }}</span> of
+      <span class="text-slate-200 font-bold">{{ peliculas.length }}</span> movies
+    </div>
+  </div>
+
+  <div class="bg-surface-dark border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+    <table class="w-full text-left">
+      <thead class="bg-white/5 border-b border-white/5">
+        <tr>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-24">Poster</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Title &amp; Info</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Genre</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Release Date</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-white/5">
+        <tr *ngFor="let p of filtered" class="hover:bg-white/[0.02] transition-colors">
+          <td class="px-6 py-4">
+            <div class="w-12 h-16 rounded overflow-hidden bg-background-dark border border-white/10 shadow-lg">
+              <img
+                [alt]="p.titulo"
+                class="w-full h-full object-cover"
+                [src]="p.posterUrl || 'https://via.placeholder.com/120x160?text=CINEMAX'"
+              />
+            </div>
+          </td>
+
+          <td class="px-6 py-4">
+            <div class="font-bold text-slate-100 uppercase tracking-tight">{{ p.titulo }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">
+              {{ p.clasificacion }} • {{ p.duracionMin }} min
+            </div>
+          </td>
+
+          <td class="px-6 py-4 text-sm text-slate-300">
+            {{ generosTexto(p) }}
+          </td>
+
+          <td class="px-6 py-4 text-sm text-slate-300">
+            {{ p.fechaEstreno || '—' }}
+          </td>
+
+          <td class="px-6 py-4">
+            <ng-container [ngSwitch]="formatStatus(p)">
+              <span
+                *ngSwitchCase="'Now Playing'"
+                class="bg-green-500/10 text-green-500 text-[10px] font-black px-2 py-0.5 rounded uppercase border border-green-500/20"
+              >
+                Now Playing
+              </span>
+
+              <span
+                *ngSwitchCase="'Coming Soon'"
+                class="bg-primary/10 text-primary text-[10px] font-black px-2 py-0.5 rounded uppercase border border-primary/20"
+              >
+                Coming Soon
+              </span>
+
+              <span
+                *ngSwitchDefault
+                class="bg-white/5 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded uppercase border border-white/10"
+              >
+                Inactive
+              </span>
+            </ng-container>
+          </td>
+
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button
+                class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                (click)="openEdit(p)"
+              >
+                <span class="material-symbols-outlined text-lg">edit</span>
+              </button>
+
+              <button
+                class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                (click)="delete(p)"
+              >
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && filtered.length === 0">
+          <td colspan="6" class="px-6 py-6 text-slate-500 font-bold">
+            No movies found.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL -->
+  <div *ngIf="modalOpen" class="fixed inset-0 z-50 bg-black/70 overflow-y-auto">
+    <div class="min-h-full flex items-start justify-center p-6">
+      <div class="w-full max-w-3xl bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <!-- HEADER MODAL -->
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <h2 class="text-lg font-black">
+            {{ editingId ? 'Edit Movie' : 'Add New Movie' }}
+          </h2>
+          <button class="text-slate-400 hover:text-white" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- BODY MODAL (SCROLL) -->
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto flex-1 max-h-[70vh]">
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Title</label>
+            <input
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [(ngModel)]="form.titulo"
+            />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Synopsis</label>
+            <textarea
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 min-h-[110px]"
+              [(ngModel)]="form.sinopsis"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Duration (min)</label>
+            <input
+              type="number"
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [(ngModel)]="form.duracionMin"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Rating</label>
+            <input
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [(ngModel)]="form.clasificacion"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Release Date</label>
+            <input
+              type="date"
+              class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2"
+              [(ngModel)]="form.fechaEstreno"
+            />
+          </div>
+
+          <div class="flex items-center gap-2 mt-7">
+            <input type="checkbox" [(ngModel)]="form.activa" />
+            <span class="text-sm font-bold text-slate-300">Active</span>
+          </div>
+
+          <!-- POSTER -->
+<div class="md:col-span-2">
+  <label class="text-xs font-bold text-slate-400 uppercase">Poster (optional)</label>
+
+  <div class="mt-3 flex items-center gap-5">
+    <!-- Preview -->
+    <div class="w-20 h-28 rounded-xl overflow-hidden border border-white/10 bg-background-dark shadow-lg">
+      <img
+        class="w-full h-full object-cover"
+        [src]="posterPreview || 'https://via.placeholder.com/160x220?text=Poster'"
+        alt="Poster preview"
+      />
+    </div>
+
+    <!-- Uploader -->
+    <div class="flex-1">
+      <!-- Input real pero oculto -->
+      <input
+        id="posterInput"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        (change)="onPosterChange($any($event.target).files?.[0] || null)"
+      />
+
+      <!-- Botón bonito -->
+      <label
+        for="posterInput"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-bold text-sm cursor-pointer transition-all"
+      >
+        <span class="material-symbols-outlined text-lg">upload</span>
+        {{ posterPreview ? 'Change Poster' : 'Upload Poster' }}
+      </label>
+
+      <!-- Botón limpiar -->
+      <button
+        *ngIf="posterPreview"
+        type="button"
+        class="ml-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary font-bold text-sm transition-all"
+        (click)="onPosterChange(null)"
+      >
+        <span class="material-symbols-outlined text-lg">delete</span>
+        Remove
+      </button>
+
+      <p class="text-[11px] text-slate-500 mt-2">
+        PNG/JPG recomendado. Máx. ~2MB (lo ideal). Si no subes nada, se mantiene el poster anterior.
+      </p>
+    </div>
+  </div>
+</div>
+
+          <!-- GENRES -->
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Genres</label>
+
+            <div *ngIf="generosLoading" class="mt-3 text-slate-500 text-sm font-bold">
+              Loading genres...
+            </div>
+
+            <div *ngIf="!generosLoading" class="mt-3 flex flex-wrap gap-2">
+              <button
+                *ngFor="let g of generos"
+                type="button"
+                (click)="toggleGenero(g.id)"
+                class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border transition-all"
+                [ngClass]="isGeneroSelected(g.id)
+                  ? 'bg-primary/20 text-primary border-primary/30'
+                  : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'"
+              >
+                {{ g.nombre }}
+              </button>
+
+              <span *ngIf="generos.length === 0" class="text-slate-500 text-sm font-bold">
+                No genres available.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER MODAL -->
+        <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-surface-dark/60">
+          <button
+            class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 font-bold"
+            type="button"
+            (click)="closeModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 font-bold text-white"
+            type="button"
+            (click)="save()"
+          >
+            {{ editingId ? 'Save Changes' : 'Create Movie' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -29,7 +29,7 @@ export class LoginComponent {
       next: (res) => {
         this.session.saveAuth(res);
         this.loading = false;
-        this.router.navigate(['/peliculas']); // ✅ login OK
+        this.router.navigate(['/peliculas']);
       },
       error: (err) => {
       this.loading = false;

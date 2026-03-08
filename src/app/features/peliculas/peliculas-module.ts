@@ -2,16 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PeliculasRoutingModule } from './peliculas-routing-module';
-import { Inicio } from './pages/inicio/inicio';
+import { InicioComponent } from './pages/inicio/inicio';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    Inicio
+    InicioComponent
   ],
   imports: [
     CommonModule,
-    PeliculasRoutingModule
+    PeliculasRoutingModule,
+    FormsModule
   ]
 })
 export class PeliculasModule { }

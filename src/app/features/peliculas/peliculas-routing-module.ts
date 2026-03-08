@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Inicio } from './pages/inicio/inicio';
+import { InicioComponent } from './pages/inicio/inicio';
 
 const routes: Routes = [
-  // /peliculas
-  { path: '', component: Inicio },
+  { path: '', component: InicioComponent },
 ];
 
 @NgModule({

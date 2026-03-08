@@ -23,9 +23,9 @@ export interface UserSummaryDTO {
 }
 
 export interface AuthResponseDTO {
-  token: string;
-  tokenType: string; 
-  expiresInSeconds: number;
+  accessToken: string;
+  tokenType: string;   // "Bearer"
+  expiresIn: number;   // 3600
   user: UserSummaryDTO;
 }
 

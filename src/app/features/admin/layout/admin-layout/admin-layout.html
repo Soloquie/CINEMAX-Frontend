@@ -1,0 +1,113 @@
+<div class="flex h-screen w-full bg-background-dark text-slate-100 overflow-hidden">
+  <!-- SIDEBAR -->
+  <aside class="w-64 flex flex-col border-r border-white/5 bg-sidebar-dark">
+    <!-- LOGO (clic -> home) -->
+    <a
+      routerLink="/peliculas"
+      class="p-6 flex items-center gap-2 text-primary hover:opacity-90 transition-opacity cursor-pointer"
+    >
+      <span class="material-symbols-outlined text-3xl font-bold">confirmation_number</span>
+      <h2 class="text-xl font-black tracking-tighter text-slate-100 uppercase">CINEMAX</h2>
+    </a>
+
+    <nav class="flex-1 mt-4">
+      <div class="px-4 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Main Menu</div>
+
+      <ul class="space-y-1">
+        <li>
+          <a
+            routerLink="/admin"
+            routerLinkActive="bg-primary/10 text-primary border-r-4 border-primary"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <span class="material-symbols-outlined text-xl">dashboard</span>
+            Dashboard
+          </a>
+        </li>
+
+        <li>
+          <a
+            routerLink="/admin/movies"
+            routerLinkActive="bg-primary/10 text-primary border-r-4 border-primary"
+            class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <span class="material-symbols-outlined text-xl">movie</span>
+            Manage Movies
+          </a>
+        </li>
+
+        <li>
+          <a
+            routerLink="/admin/cines"
+            routerLinkActive="bg-primary/10 text-primary border-r-4 border-primary"
+            class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <span class="material-symbols-outlined text-xl">theater_comedy</span>
+            Theaters
+          </a>
+        </li>
+
+        <li>
+          <a
+            routerLink="/admin/funciones"
+            routerLinkActive="bg-primary/10 text-primary border-r-4 border-primary"
+            class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <span class="material-symbols-outlined text-xl">aspect_ratio</span>
+            Showtimes
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="p-4 border-t border-white/5 mt-auto">
+      <div class="flex items-center gap-3 px-2 py-3">
+        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+          {{ initials }}
+        </div>
+
+        <div class="flex-1 overflow-hidden">
+          <p class="text-xs font-bold text-slate-100 truncate">
+            {{ me ? (me.nombre + ' ' + me.apellido) : 'Cargando...' }}
+          </p>
+
+          <p class="text-[10px] text-slate-500 truncate">
+            {{ me?.email || '' }}
+          </p>
+
+          <p class="text-[10px] mt-1 font-bold uppercase tracking-widest"
+             [ngClass]="isAdmin ? 'text-primary' : 'text-slate-500'">
+            {{ isAdmin ? 'ADMIN' : 'USER' }}
+          </p>
+        </div>
+  <button
+    class="text-slate-500 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+    type="button"
+    (click)="goHome()"
+    title="Ir a Home"
+  >
+    <span class="material-symbols-outlined text-lg">home</span>
+  </button>
+
+        <button
+          class="text-slate-500 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+          type="button"
+          (click)="logout()"
+          title="Logout"
+        >
+          <span class="material-symbols-outlined text-lg">logout</span>
+        </button>
+      </div>
+
+      <p *ngIf="meError" class="mt-2 text-[10px] text-red-400 font-bold px-2">
+        {{ meError }}
+      </p>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -9,7 +9,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.session.getToken();
-    if (!token) return next.handle(req);
+  if (!token || token === 'undefined' || token === 'null') {
+    return next.handle(req);
+  }
 
     const authReq = req.clone({
       setHeaders: {

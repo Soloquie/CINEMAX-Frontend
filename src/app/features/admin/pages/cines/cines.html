@@ -1,0 +1,390 @@
+<header class="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-surface-dark/30 backdrop-blur-sm">
+  <h1 class="text-xl font-bold">Theaters</h1>
+
+  <div class="flex items-center gap-3">
+    <button
+      class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20"
+      type="button"
+      (click)="openCineCreate()"
+    >
+      <span class="material-symbols-outlined text-lg">add_circle</span>
+      Add Cinema
+    </button>
+  </div>
+</header>
+
+<div class="flex-1 overflow-auto p-8">
+  <p *ngIf="errorMsg" class="text-red-400 font-bold mb-4">{{ errorMsg }}</p>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- LEFT: CINES -->
+    <div class="bg-surface-dark border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+      <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+        <div>
+          <h2 class="font-black uppercase tracking-wider">Cinemas</h2>
+          <p class="text-xs text-slate-500">Selecciona un cine para ver sus salas</p>
+        </div>
+      </div>
+
+      <div class="divide-y divide-white/5">
+        <button
+          *ngFor="let c of cines"
+          type="button"
+          (click)="selectCine(c)"
+          class="w-full text-left px-6 py-4 hover:bg-white/[0.03] transition-colors"
+          [ngClass]="selectedCine?.id === c.id ? 'bg-primary/10' : ''"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="font-bold text-slate-100 truncate">{{ c.nombre }}</div>
+              <div class="text-[11px] text-slate-500 mt-1 truncate">{{ c.ciudad }} • {{ c.direccion }}</div>
+
+              <div class="mt-2">
+                <span
+                  class="text-[10px] font-black px-2 py-0.5 rounded uppercase border"
+                  [ngClass]="c.activo
+                    ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                    : 'bg-white/5 text-slate-400 border-white/10'"
+                >
+                  {{ c.activo ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button
+                class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg"
+                (click)="openCineEdit(c); $event.stopPropagation()"
+              >
+                <span class="material-symbols-outlined text-lg">edit</span>
+              </button>
+              <button
+                class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg"
+                (click)="deleteCine(c); $event.stopPropagation()"
+              >
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </div>
+        </button>
+
+        <div *ngIf="!loading && cines.length === 0" class="px-6 py-6 text-slate-500 font-bold">
+          No cinemas.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SALAS -->
+    <div class="lg:col-span-2 bg-surface-dark border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+      <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+        <div>
+          <h2 class="font-black uppercase tracking-wider">Rooms</h2>
+          <p class="text-xs text-slate-500" *ngIf="selectedCine">
+            Cine: <span class="text-slate-200 font-bold">{{ selectedCine.nombre }}</span>
+          </p>
+          <p class="text-xs text-slate-500" *ngIf="!selectedCine">Selecciona un cine a la izquierda</p>
+        </div>
+
+        <button
+          class="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all disabled:opacity-40"
+          type="button"
+          [disabled]="!selectedCine"
+          (click)="openSalaCreate()"
+        >
+          <span class="material-symbols-outlined text-lg">add</span>
+          Add Room
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div *ngIf="!selectedCine" class="text-slate-500 font-bold">
+          Selecciona un cine para administrar sus salas.
+        </div>
+
+        <div *ngIf="selectedCine" class="space-y-3">
+          <div
+            *ngFor="let s of salas"
+            class="bg-background-dark border border-white/10 rounded-xl p-4 flex items-center justify-between gap-3"
+          >
+            <div class="min-w-0">
+              <div class="font-bold text-slate-100 truncate">{{ s.nombre }}</div>
+              <div class="text-[11px] text-slate-500 mt-1">
+                Tipo: <span class="text-slate-300 font-bold">{{ s.tipo }}</span>
+              </div>
+
+              <div class="mt-2">
+                <span
+                  class="text-[10px] font-black px-2 py-0.5 rounded uppercase border"
+                  [ngClass]="s.activa
+                    ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                    : 'bg-white/5 text-slate-400 border-white/10'"
+                >
+                  {{ s.activa ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button
+                class="px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary font-bold text-xs flex items-center gap-2"
+                type="button"
+                (click)="openGenerarAsientos(s)"
+              >
+                <span class="material-symbols-outlined text-base">grid_view</span>
+                Generate Seats
+              </button>
+
+              <button
+                class="px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-bold text-xs flex items-center gap-2"
+                type="button"
+                (click)="openVerAsientos(s)"
+              >
+                <span class="material-symbols-outlined text-base">chair</span>
+                View Seats
+              </button>
+
+              <button class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg" (click)="openSalaEdit(s)">
+                <span class="material-symbols-outlined text-lg">edit</span>
+              </button>
+              <button class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg" (click)="deleteSala(s)">
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="!loading && salas.length === 0" class="text-slate-500 font-bold">
+            Este cine aún no tiene salas.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CINE -->
+  <div *ngIf="cineModalOpen" class="fixed inset-0 z-50 bg-black/70 overflow-y-auto">
+    <div class="min-h-full flex items-start justify-center p-6">
+      <div class="w-full max-w-xl bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <h2 class="text-lg font-black">{{ cineEditingId ? 'Edit Cinema' : 'Add Cinema' }}</h2>
+          <button class="text-slate-400 hover:text-white" type="button" (click)="cineModalOpen=false">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="p-6 grid grid-cols-1 gap-4">
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Name</label>
+            <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="cineForm.nombre" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-bold text-slate-400 uppercase">City</label>
+              <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="cineForm.ciudad" />
+            </div>
+
+            <div class="flex items-center gap-2 mt-7">
+              <input type="checkbox" [(ngModel)]="cineForm.activo" />
+              <span class="text-sm font-bold text-slate-300">Active</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Address</label>
+            <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="cineForm.direccion" />
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-surface-dark/60">
+          <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 font-bold" type="button" (click)="cineModalOpen=false">Cancel</button>
+          <button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 font-bold text-white" type="button" (click)="saveCine()">
+            {{ cineEditingId ? 'Save Changes' : 'Create Cinema' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SALA -->
+  <div *ngIf="salaModalOpen" class="fixed inset-0 z-50 bg-black/70 overflow-y-auto">
+    <div class="min-h-full flex items-start justify-center p-6">
+      <div class="w-full max-w-xl bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <h2 class="text-lg font-black">{{ salaEditingId ? 'Edit Room' : 'Add Room' }}</h2>
+          <button class="text-slate-400 hover:text-white" type="button" (click)="salaModalOpen=false">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="p-6 grid grid-cols-1 gap-4">
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Name</label>
+            <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="salaForm.nombre" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-bold text-slate-400 uppercase">Type</label>
+              <select class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="salaForm.tipo">
+                <option *ngFor="let t of tipoSalaOptions" [ngValue]="t">{{ t }}</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2 mt-7">
+              <input type="checkbox" [(ngModel)]="salaForm.activa" />
+              <span class="text-sm font-bold text-slate-300">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-surface-dark/60">
+          <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 font-bold" type="button" (click)="salaModalOpen=false">Cancel</button>
+          <button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 font-bold text-white" type="button" (click)="saveSala()">
+            {{ salaEditingId ? 'Save Changes' : 'Create Room' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL GENERAR ASIENTOS -->
+  <div *ngIf="asientosModalOpen" class="fixed inset-0 z-50 bg-black/70 overflow-y-auto">
+    <div class="min-h-full flex items-start justify-center p-6">
+      <div class="w-full max-w-2xl bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <h2 class="text-lg font-black">Generate Seats</h2>
+          <button class="text-slate-400 hover:text-white" type="button" (click)="asientosModalOpen=false">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto max-h-[70vh]">
+          <div class="md:col-span-2">
+            <p class="text-sm text-slate-300">
+              Sala: <span class="font-black">{{ asientosSala?.nombre }}</span>
+              <span class="text-slate-500">({{ asientosSala?.tipo }})</span>
+            </p>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Rows (CSV)</label>
+            <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="filasText" placeholder="A,B,C,D,E" />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Seats per row</label>
+            <input type="number" class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="asientosPorFila" />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase">Default seat type</label>
+            <select class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="tipoDefault">
+              <option *ngFor="let t of tipoAsientoOptions" [ngValue]="t">{{ t }}</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">VIP rows (CSV)</label>
+            <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="vipFilasText" placeholder="F,G (opcional)" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-400 uppercase">Disabled positions (CSV)</label>
+            <input class="mt-2 w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2" [(ngModel)]="discapacidadText" placeholder="A1,A2,B3 (opcional)" />
+            <p class="text-[11px] text-slate-500 mt-2">Formato: letra+numero. Ej: A1, A2, B3</p>
+          </div>
+
+          <div class="flex items-center gap-2 md:col-span-2">
+            <input type="checkbox" [(ngModel)]="desactivarFuera" />
+            <span class="text-sm font-bold text-slate-300">Disable outside seats</span>
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-surface-dark/60">
+          <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 font-bold" type="button" (click)="asientosModalOpen=false">Cancel</button>
+          <button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 font-bold text-white" type="button" (click)="generarAsientos()">
+            Generate
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER ASIENTOS (MINI-GRID) -->
+  <div *ngIf="asientosViewOpen" class="fixed inset-0 z-50 bg-black/70 overflow-y-auto">
+    <div class="min-h-full flex items-start justify-center p-6">
+      <div class="w-full max-w-5xl bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <div>
+            <h2 class="text-lg font-black">Seat Map</h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Sala: <span class="text-slate-200 font-bold">{{ asientosSalaView?.nombre }}</span>
+              <span class="text-slate-500">({{ asientosSalaView?.tipo }})</span>
+            </p>
+          </div>
+
+          <button class="text-slate-400 hover:text-white" type="button" (click)="asientosViewOpen=false">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="p-6 overflow-auto">
+          <p *ngIf="asientosError" class="text-red-400 font-bold mb-4">{{ asientosError }}</p>
+
+          <!-- Leyenda -->
+          <div class="flex flex-wrap items-center gap-3 mb-4 text-xs font-bold">
+            <span class="px-3 py-1 rounded-full border border-green-500/20 bg-green-500/10 text-green-200">STANDARD</span>
+            <span class="px-3 py-1 rounded-full border border-primary/30 bg-primary/20 text-primary">VIP</span>
+            <span class="px-3 py-1 rounded-full border border-blue-400/30 bg-blue-500/20 text-blue-200">DISCAPACIDAD</span>
+            <span class="px-3 py-1 rounded-full border border-white/10 bg-slate-800/60 text-slate-400">INACTIVO</span>
+          </div>
+
+          <div *ngIf="asientosLoading" class="text-slate-500 font-bold">Loading seats...</div>
+
+          <!-- GRID -->
+          <div *ngIf="!asientosLoading && gridRows.length > 0" class="inline-block">
+            <!-- header columnas -->
+            <div class="flex items-center gap-1 mb-2">
+              <div class="w-10"></div>
+              <div class="flex gap-1">
+                <div *ngFor="let c of gridCols" class="w-8 text-center text-[10px] font-black text-slate-500">
+                  {{ c }}
+                </div>
+              </div>
+            </div>
+
+            <!-- filas -->
+            <div class="space-y-1">
+              <div *ngFor="let r of gridRows" class="flex items-center gap-1">
+                <div class="w-10 text-right pr-2 text-xs font-black text-slate-400">{{ r }}</div>
+
+                <div class="flex gap-1">
+                  <button
+                    *ngFor="let c of gridCols"
+                    type="button"
+                    class="w-8 h-8 rounded-md border text-[10px] font-black transition-all"
+                    [ngClass]="seatClass(r, c)"
+                    [title]="seatTooltip(r, c)"
+                  >
+                    {{ r }}{{ c }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!asientosLoading && gridRows.length === 0" class="text-slate-500 font-bold">
+            Esta sala aún no tiene asientos generados.
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-surface-dark/60">
+          <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 font-bold" type="button" (click)="asientosViewOpen=false">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
