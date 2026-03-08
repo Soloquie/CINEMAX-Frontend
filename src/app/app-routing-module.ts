@@ -21,6 +21,11 @@ const routes: Routes = [
   path: 'admin',
   loadChildren: () => import('./features/admin/admin-module').then(m => m.AdminModule),
 },
+{
+  path: 'peliculas/:id/tickets',
+  loadChildren: () =>
+    import('./features/peliculas/pages/tickets/tickets-module').then(m => m.TicketsModule),
+},
   { path: '**', redirectTo: 'peliculas' },
 ];
 

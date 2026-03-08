@@ -1,0 +1,19 @@
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.curved-screen {
+  height: 10px;
+  width: 80%;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, #e11d48, transparent);
+  border-radius: 50% / 100% 100% 0 0;
+  box-shadow: 0 -10px 20px rgba(225, 29, 72, 0.25);
+}
+
+.seat {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

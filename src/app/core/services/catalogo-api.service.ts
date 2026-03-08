@@ -9,13 +9,27 @@ export interface CinePublicDTO {
   ciudad?: string;
 }
 
+export interface GeneroDTO { id: number; nombre: string; }
+
+export interface PeliculaDetailDTO {
+  id: number;
+  titulo: string;
+  sinopsis?: string;
+  duracionMin?: number;
+  clasificacion?: string;
+  fechaEstreno?: string;
+  posterUrl?: string;
+  activa?: boolean;
+  generos?: GeneroDTO[];
+}
+
 export interface PeliculaCardDTO {
   id: number;
   titulo: string;
   posterUrl?: string;
   clasificacion?: string;
   duracionMin?: number;
-  genero?: string; // opcional
+  genero?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -38,4 +52,8 @@ export class CatalogoApiService {
     const params = new HttpParams().set('dias', String(dias));
     return this.http.get<PeliculaCardDTO[]>(`${this.base}/peliculas/proximas`, { params });
   }
+
+  detallePelicula(id: number): Observable<PeliculaDetailDTO> {
+  return this.http.get<PeliculaDetailDTO>(`${this.base}/peliculas/${id}`);
+}
 }

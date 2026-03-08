@@ -1,0 +1,138 @@
+<div class="min-h-screen bg-background-dark text-slate-100">
+  <div class="max-w-5xl mx-auto px-6 lg:px-12 py-10">
+    <!-- TOP -->
+    <div class="flex items-start justify-between gap-6 mb-8">
+      <div>
+        <h1 class="text-4xl font-black tracking-tight uppercase">Select Seats</h1>
+        <p class="text-slate-400 font-bold mt-2">
+          Función <span class="text-slate-200">#{{ funcionId }}</span>
+          <span *ngIf="countdownText && selected.size > 0" class="ml-3 text-primary font-black">
+            HOLD: {{ countdownText }}
+          </span>
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="goBack()"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-black"
+      >
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver
+      </button>
+    </div>
+
+    <!-- ERROR -->
+    <p *ngIf="errorMsg" class="mb-6 text-red-400 font-black">{{ errorMsg }}</p>
+
+    <!-- SCREEN -->
+    <div class="rounded-2xl bg-surface-dark border border-white/10 p-6 mb-8">
+      <div class="curved-screen mb-3"></div>
+      <p class="text-center text-slate-500 text-xs tracking-[0.3em] uppercase font-black">Screen</p>
+    </div>
+
+    <!-- GRID -->
+    <div class="rounded-2xl bg-surface-dark border border-white/10 p-6">
+      <div *ngIf="loading" class="text-slate-400 font-black">Cargando asientos...</div>
+
+      <div *ngIf="!loading">
+        <div class="overflow-x-auto no-scrollbar">
+          <div class="inline-block min-w-full">
+            <div class="space-y-2">
+              <div *ngFor="let r of rows" class="flex items-center gap-3">
+                <!-- row label -->
+                <div class="w-6 text-xs font-black text-slate-500">{{ r }}</div>
+
+                <!-- seats row -->
+                <div class="flex gap-2">
+                  <button
+                    *ngFor="let seat of (grid.get(r) || [])"
+                    type="button"
+                    class="seat"
+                    [class]="seatClass(seat)"
+                    [disabled]="!seat || !isSelectable(seat)"
+                    (click)="seat && toggleSeat(seat)"
+                    [title]="seat ? (seat.fila + seat.numero + ' • ' + seat.tipo + ' • ' + seat.estado) : ''"
+                  >
+                    <span *ngIf="seat?.tipo === 'DISCAPACIDAD'" class="material-symbols-outlined text-[14px]">
+                      accessible
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEGEND -->
+        <div class="mt-8 flex flex-wrap justify-center gap-6 px-4 py-3 bg-white/5 rounded-xl border border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded bg-slate-700 border border-slate-700"></span>
+            <span class="text-xs text-slate-400 font-bold">Disponible</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded bg-primary border border-primary"></span>
+            <span class="text-xs text-slate-400 font-bold">Seleccionado (mío)</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded bg-slate-900 border border-slate-800"></span>
+            <span class="text-xs text-slate-400 font-bold">Ocupado / Bloqueado</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-lg border-2 border-primary/40 bg-slate-700"></span>
+            <span class="text-xs text-slate-400 font-bold">VIP</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded bg-slate-700 border border-slate-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[12px] text-slate-300">accessible</span>
+            </span>
+            <span class="text-xs text-slate-400 font-bold">Discapacidad</span>
+          </div>
+        </div>
+
+        <!-- SUMMARY BAR -->
+        <div class="mt-8 rounded-2xl bg-white/5 border border-white/10 p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+          <div>
+            <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Selected Seats</div>
+
+            <div class="mt-2 flex flex-wrap gap-2">
+              <span *ngFor="let s of selectedSeatLabels()"
+                class="px-3 py-1 rounded-full bg-primary/15 border border-primary/25 text-primary font-black text-xs">
+                {{ s }}
+              </span>
+
+              <span *ngIf="selected.size === 0" class="text-slate-400 font-bold">
+                Ninguno
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 justify-end">
+            <button
+              type="button"
+              class="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-black disabled:opacity-40"
+              (click)="clearMySelection()"
+              [disabled]="selected.size === 0 || pending"
+            >
+              Limpiar
+            </button>
+
+            <button
+              type="button"
+              class="px-8 py-3 rounded-xl bg-primary hover:bg-primary/90 font-black text-white shadow-lg shadow-primary/20 disabled:opacity-40"
+              (click)="confirmSelection()"
+              [disabled]="selected.size === 0 || pending"
+            >
+              Confirm Selection
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

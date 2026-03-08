@@ -225,4 +225,9 @@ goAdminPanel(): void {
   this.menuOpen = false;
   this.router.navigate(['/admin']);
 }
+
+goBuyTickets(peliculaId?: number | null): void {
+  if (!peliculaId) return;
+  this.router.navigate(['/peliculas', peliculaId, 'tickets']);
+}
 }

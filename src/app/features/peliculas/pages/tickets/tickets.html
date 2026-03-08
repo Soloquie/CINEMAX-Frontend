@@ -1,0 +1,252 @@
+<div class="min-h-screen bg-background-dark text-slate-100">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-10">
+    <!-- top -->
+    <div class="flex items-start justify-between gap-6 mb-8">
+      <div>
+        <h1 class="text-4xl font-black tracking-tight uppercase">Buy Tickets</h1>
+        <p class="text-slate-400 font-bold mt-2">
+          Selecciona un cine y una función. <span class="text-slate-500">(Fecha opcional)</span>
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="goHome()"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-black"
+      >
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- LEFT: movie -->
+      <div class="lg:col-span-4 space-y-5">
+        <div class="relative rounded-2xl overflow-hidden border border-white/10 bg-surface-dark shadow-2xl">
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>
+
+          <img
+            class="w-full aspect-[2/3] object-cover"
+            [src]="pelicula?.posterUrl || 'assets/poster-placeholder.png'"
+            [alt]="pelicula?.titulo || 'Película'"
+          />
+
+          <div class="absolute top-4 left-4 flex items-center gap-2">
+            <span class="bg-primary text-white text-[10px] font-black px-2 py-1 rounded uppercase">Now Playing</span>
+            <span
+              *ngIf="pelicula?.clasificacion"
+              class="bg-white/10 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 rounded uppercase border border-white/20"
+            >
+              {{ pelicula?.clasificacion }}
+            </span>
+          </div>
+
+          <div class="absolute bottom-0 left-0 right-0 p-5">
+            <h2 class="text-2xl font-black uppercase tracking-tight">
+              {{ pelicula?.titulo || ('Película ' + peliculaId) }}
+            </h2>
+
+            <div class="mt-2 text-xs text-slate-300 font-bold">
+              <span *ngIf="pelicula?.duracionMin">{{ pelicula?.duracionMin }} min</span>
+              <span *ngIf="pelicula?.duracionMin && pelicula?.clasificacion"> • </span>
+              <span *ngIf="pelicula?.clasificacion">{{ pelicula?.clasificacion }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-5">
+          <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Géneros</div>
+          <div class="mt-2 text-sm font-bold text-slate-200">
+            {{ generosTexto() }}
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-white/10">
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Sinopsis</div>
+            <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+              {{ pelicula?.sinopsis || '—' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: selection -->
+      <div class="lg:col-span-8 space-y-6">
+        <!-- DATE -->
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary">calendar_today</span>
+            <h3 class="text-lg font-black uppercase tracking-wider">Seleccionar fecha</h3>
+          </div>
+
+          <!-- ✅ chips -->
+          <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+            <!-- TODAS -->
+            <button
+              type="button"
+              (click)="selectDate(null)"
+              class="flex-shrink-0 w-20 h-20 rounded-2xl border font-black transition-all"
+              [ngClass]="!selectedDate
+                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                : 'bg-white/5 text-slate-200 border-white/10 hover:border-primary/60'"
+            >
+              <div class="text-xs opacity-80 uppercase">Todas</div>
+              <div class="text-2xl leading-none">—</div>
+              <div class="text-[10px] uppercase opacity-70 mt-1">Fechas</div>
+            </button>
+
+            <!-- sugeridas -->
+            <button
+              *ngFor="let d of availableDates | slice:0:10"
+              type="button"
+              (click)="selectDate(d)"
+              class="flex-shrink-0 w-20 h-20 rounded-2xl border font-black transition-all"
+              [ngClass]="d === selectedDate
+                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                : 'bg-white/5 text-slate-200 border-white/10 hover:border-primary/60'"
+            >
+              <div class="text-xs opacity-80">{{ dateChipLabel(d).split(' ')[0] }}</div>
+              <div class="text-2xl leading-none">{{ dateChipLabel(d).split(' ')[1] }}</div>
+              <div class="text-[10px] uppercase opacity-70 mt-1">{{ d === selectedDate ? 'Selected' : ' ' }}</div>
+            </button>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Otra fecha (opcional)</label>
+<input
+  type="date"
+  class="mt-2 w-full bg-background-dark border border-white/10 rounded-xl px-4 py-3 font-bold"
+  [ngModel]="selectedDate || ''"
+  (ngModelChange)="selectDate($event)"
+/>
+
+<button
+  type="button"
+  class="mt-3 text-xs font-black text-slate-300 hover:text-primary underline"
+  (click)="selectDate(null)"
+>
+  Ver todas las fechas
+</button>
+              <p class="text-[11px] text-slate-500 mt-2 font-bold">
+                Si lo dejas vacío, se muestran funciones de todas las fechas.
+              </p>
+            </div>
+
+            <div class="flex items-end">
+              <div class="text-sm text-slate-400 font-bold">
+                <span class="text-slate-200">{{ filteredFunciones.length }}</span> disponibles
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CINE -->
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary">location_on</span>
+            <h3 class="text-lg font-black uppercase tracking-wider">Seleccionar cine</h3>
+          </div>
+
+          <div class="relative">
+            <select
+              class="w-full appearance-none bg-background-dark border border-white/10 rounded-xl px-4 py-4 font-bold cursor-pointer focus:ring-2 focus:ring-primary/40"
+              [ngModel]="selectedCineId"
+              (ngModelChange)="selectCine($event)"
+            >
+              <option [ngValue]="null">All Cinemas</option>
+              <option *ngFor="let c of cinesDisponibles" [ngValue]="c.id">
+                {{ c.nombre }}{{ c.ciudad ? ' • ' + c.ciudad : '' }}
+              </option>
+            </select>
+
+            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+              expand_more
+            </span>
+          </div>
+
+          <p class="text-[11px] text-slate-500 mt-3 font-bold">
+            El listado de cines se ajusta a la fecha si eliges una.
+          </p>
+        </div>
+
+        <!-- SHOWTIMES -->
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-6">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">schedule</span>
+              <h3 class="text-lg font-black uppercase tracking-wider">Showtimes</h3>
+            </div>
+
+            <div class="text-sm text-slate-400 font-bold">
+              <span class="text-slate-200">{{ filteredFunciones.length }}</span> disponibles
+            </div>
+          </div>
+
+          <p *ngIf="errorMsg" class="text-red-400 font-bold mb-3">{{ errorMsg }}</p>
+
+          <div *ngIf="loading" class="text-slate-400 font-bold">Cargando funciones...</div>
+
+          <div *ngIf="!loading && filteredFunciones.length === 0" class="bg-white/5 border border-white/10 rounded-xl p-4 text-slate-400 font-bold">
+            No hay funciones para esos filtros.
+            <div class="text-[11px] text-slate-500 mt-2">
+              Tip: cambia el cine o selecciona una fecha sugerida.
+            </div>
+          </div>
+
+          <div *ngIf="!loading && filteredFunciones.length > 0" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button
+              *ngFor="let f of filteredFunciones"
+              type="button"
+              (click)="selectFuncion(f)"
+              class="p-3 rounded-xl border text-left transition-all"
+              [ngClass]="selectedFuncion?.id === f.id
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-white/10 bg-white/5 hover:border-primary/50 text-slate-100'"
+            >
+              <div class="text-sm font-black">{{ formatTime(f.inicio) }}</div>
+
+              <div class="text-[10px] font-bold text-slate-400 mt-1 truncate">
+                {{ f.cineNombre }} • {{ f.salaNombre }}
+              </div>
+
+              <div class="text-[10px] font-bold text-slate-500 mt-1">
+                {{ fechaDeFuncion(f.inicio) }}
+              </div>
+
+              <div class="text-[10px] font-black mt-2">
+                $ {{ formatMoney(f.precioBase) }}
+              </div>
+            </button>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm font-bold text-slate-400">
+              <div class="text-slate-500 text-[11px] font-black uppercase tracking-[0.2em]">Selected Slot</div>
+              <div class="text-slate-100">
+                <ng-container *ngIf="selectedFuncion; else noSel">
+                  {{ fechaDeFuncion(selectedFuncion.inicio) }} • {{ formatTime(selectedFuncion.inicio) }}
+                  <span class="text-slate-500">• {{ selectedFuncion.cineNombre }} ({{ selectedFuncion.salaNombre }})</span>
+                </ng-container>
+                <ng-template #noSel>Selecciona una función</ng-template>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              (click)="goToSeats()"
+              [disabled]="!selectedFuncion"
+              class="px-10 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all"
+              [ngClass]="selectedFuncion
+                ? 'bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20'
+                : 'bg-primary/30 text-white/60 cursor-not-allowed'"
+            >
+              Select Seats
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
