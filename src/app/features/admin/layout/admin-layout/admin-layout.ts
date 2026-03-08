@@ -70,7 +70,7 @@ export class AdminLayoutComponent implements OnInit {
           this.meError = 'No se pudo cargar la información del usuario.';
           this.me = null;
           this.initials = 'AD';
-          this.isAdmin = true; // opcional
+          this.isAdmin = true;  
         }
       });
   }

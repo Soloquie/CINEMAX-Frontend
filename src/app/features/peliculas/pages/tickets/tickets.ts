@@ -27,7 +27,6 @@ export class TicketsComponent implements OnInit {
   cinesDisponibles: CinePublicDTO[] = [];
   selectedCineId: number | null = null;
 
-  // ✅ FECHA OPCIONAL
   selectedDate: string | null = null;
   availableDates: string[] = [];
 
@@ -64,7 +63,7 @@ export class TicketsComponent implements OnInit {
     this.catalogoApi.listarCines().subscribe({
       next: (cines) => {
         this.cines = cines || [];
-        this.recomputeCinesDisponibles(); // ✅ depende de allFunciones + selectedDate
+        this.recomputeCinesDisponibles();
       },
       error: () => {
         this.cines = [];
@@ -78,13 +77,11 @@ export class TicketsComponent implements OnInit {
     this.errorMsg = '';
     this.selectedFuncion = null;
 
-    // ✅ sin fecha y sin cine: trae todas las funciones de esa película
     this.funcionesApi.listar(undefined, undefined, this.peliculaId).subscribe({
       next: (list) => {
         this.allFunciones = list || [];
         this.availableDates = this.computeAvailableDates(this.allFunciones);
 
-        // ✅ NO seleccionar fecha por defecto
         this.selectedDate = null;
 
         this.recomputeCinesDisponibles();
@@ -139,7 +136,6 @@ export class TicketsComponent implements OnInit {
     this.filteredFunciones = list;
   }
 
-  // ✅ cines disponibles según filtros (fecha opcional)
   private recomputeCinesDisponibles(): void {
     if (!this.allFunciones || this.allFunciones.length === 0) {
       this.cinesDisponibles = [...this.cines];
@@ -174,7 +170,20 @@ export class TicketsComponent implements OnInit {
 
   goToSeats(): void {
     if (!this.selectedFuncion) return;
-    this.router.navigate(['/peliculas', this.peliculaId, 'tickets', this.selectedFuncion.id, 'asientos']);
+
+    this.router.navigate(
+      ['/peliculas', this.peliculaId, 'tickets', this.selectedFuncion.id, 'asientos'],
+      {
+        state: {
+          posterUrl: this.selectedFuncion.posterUrl,
+          peliculaTitulo: this.selectedFuncion.peliculaTitulo,
+          cineNombre: this.selectedFuncion.cineNombre,
+          salaNombre: this.selectedFuncion.salaNombre,
+          inicioFuncion: this.selectedFuncion.inicio,
+          },
+        }
+
+    );
   }
 
   // ---------- helpers ----------
@@ -190,7 +199,6 @@ export class TicketsComponent implements OnInit {
     return num.toLocaleString('es-CO');
   }
 
-  // ✅ fecha "YYYY-MM-DD" desde inicio
   fechaDeFuncion(inicioIso: string): string {
     return inicioIso?.length >= 10 ? inicioIso.substring(0, 10) : '—';
   }

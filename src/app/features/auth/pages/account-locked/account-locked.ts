@@ -17,13 +17,12 @@ export class AccountLockedComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
-    // opcional: si mandas minutes por query (?minutes=15)
     const minutes = Number(this.route.snapshot.queryParamMap.get('minutes'));
     if (!Number.isNaN(minutes) && minutes > 0) {
       this.totalSeconds = minutes * 60;
     }
 
-    this.tick(); // pinta inicial
+    this.tick(); 
     this.timerId = setInterval(() => this.tick(), 1000);
   }
 

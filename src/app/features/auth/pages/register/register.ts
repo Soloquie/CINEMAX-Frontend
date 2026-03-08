@@ -30,7 +30,6 @@ export class RegisterComponent {
     this.authApi.register(this.model).subscribe({
       next: () => {
         this.loading = false;
-        // mandamos a la pantalla de verify (sin token, porque el token viene en el correo)
         this.router.navigate(['/auth/verify-account']);
       },
       error: (err) => {

@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'peliculas' },
 
-  // /peliculas carga el módulo de peliculas (lazy)
   {
     path: 'peliculas',
     loadChildren: () =>
@@ -26,6 +25,10 @@ const routes: Routes = [
   loadChildren: () =>
     import('./features/peliculas/pages/tickets/tickets-module').then(m => m.TicketsModule),
 },
+  {
+    path: 'carrito',
+    loadChildren: () => import('./features/carrito/carrito-module').then(m => m.CarritoModule),
+  },
   { path: '**', redirectTo: 'peliculas' },
 ];
 

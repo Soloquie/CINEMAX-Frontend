@@ -56,7 +56,6 @@ export class ResetPasswordComponent implements OnInit {
         this.okMsg = res?.message || 'Contraseña actualizada correctamente.';
         this.loading = false;
 
-        // opcional: volver al login
         setTimeout(() => this.router.navigate(['/auth/login']), 1200);
       },
       error: (err) => {

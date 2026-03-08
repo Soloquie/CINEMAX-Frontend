@@ -28,7 +28,7 @@ export interface PeliculaUpsertForm {
   fechaEstreno: string;      // yyyy-MM-dd
   activa: boolean;
   generoIds: number[];
-  poster?: File | null;      // opcional
+  poster?: File | null;      
 }
 
 @Injectable({ providedIn: 'root' })
@@ -62,7 +62,6 @@ export class AdminPeliculasApiService {
     fd.append('fechaEstreno', form.fechaEstreno);
     fd.append('activa', String(form.activa));
 
-    // generoIds: enviarlo repetido (Spring lo mapea bien)
     for (const gid of (form.generoIds || [])) {
       fd.append('generoIds', String(gid));
     }

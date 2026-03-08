@@ -33,7 +33,7 @@ export class InicioComponent implements OnInit {
 
   // auth/menu
   menuOpen = false;
-  userSummary: any = null;         // ✅ NO inicializar usando this.session acá
+  userSummary: any = null;       
   userMe: UserMeDTO | null = null;
 
   private searchTimer: any;
@@ -47,7 +47,7 @@ export class InicioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userSummary = this.session.getUser(); // ✅ aquí sí
+    this.userSummary = this.session.getUser(); 
     this.loadHome();
     this.loadUserIfLogged();
   }
@@ -175,7 +175,7 @@ export class InicioComponent implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
-    this.router.navigate(['/carrito']); // placeholder (lo hacemos luego)
+    this.router.navigate(['/carrito']); 
   }
 
   toggleMenu(): void {

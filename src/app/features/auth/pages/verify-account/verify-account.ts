@@ -49,7 +49,6 @@ export class VerifyAccountComponent implements OnInit {
         this.serverMessage = res.message || 'Email verified successfully.';
         this.loading = false;
 
-        // opcional: redirigir al login luego de verificar
         setTimeout(() => this.router.navigate(['/auth/login']), 1200);
       },
       error: (err) => {

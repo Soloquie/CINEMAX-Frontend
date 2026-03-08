@@ -1,0 +1,237 @@
+<div class="min-h-screen bg-background-dark text-slate-100">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12 py-8">
+
+    <!-- Top bar -->
+    <div class="flex items-center justify-between gap-4 mb-6">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-3xl">confirmation_number</span>
+        <div>
+          <h1 class="text-xl font-black uppercase tracking-tight">CINEMAX</h1>
+          <p class="text-xs text-slate-500 font-bold uppercase tracking-[0.2em]">Order Summary</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="goBack()"
+        class="h-10 w-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 grid place-items-center"
+        title="Cerrar"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div class="rounded-2xl bg-surface-dark border border-white/10 p-6 mb-6">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Step 2 of 4</p>
+          <p class="text-lg font-black mt-1">Resumen de compra</p>
+        </div>
+
+        <div class="text-primary font-black text-sm">50%</div>
+      </div>
+
+      <div class="mt-4 h-2.5 rounded-full bg-white/5 overflow-hidden">
+        <div class="h-full bg-primary rounded-full" style="width: 50%"></div>
+      </div>
+
+      <div class="mt-3 flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+        <span>Selection</span>
+        <span class="text-primary">Summary</span>
+        <span>Payment</span>
+        <span>Confirmation</span>
+      </div>
+
+      <div class="mt-4 text-sm text-slate-400 font-bold">
+        <span class="text-slate-200">Película:</span> {{ movieTitle }}
+        <span *ngIf="isMultiFuncion()" class="ml-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary/80">
+          (varias funciones)
+        </span>
+      </div>
+    </div>
+
+    <p *ngIf="errorMsg" class="text-red-400 font-black mb-6">{{ errorMsg }}</p>
+
+    <!-- Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- LEFT -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Movie card -->
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-5 shadow-2xl">
+          <div class="flex flex-col md:flex-row items-stretch gap-6">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-black uppercase">Now Playing</span>
+                <span class="px-2 py-0.5 rounded bg-white/10 text-slate-200 text-[10px] font-black uppercase">CINEMAX</span>
+              </div>
+
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Selected Movie</p>
+              <h2 class="text-2xl font-black mt-1">{{ movieTitle }}</h2>
+
+              <div class="flex items-center gap-2 mt-3 text-slate-400">
+                <span class="material-symbols-outlined text-base">location_on</span>
+                <p class="text-sm font-bold">{{ cineNombre }}</p>
+              </div>
+
+              <button
+                type="button"
+                (click)="backToSeats()"
+                class="mt-4 inline-flex items-center gap-2 h-9 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-black"
+              >
+                <span class="material-symbols-outlined text-sm">edit</span>
+                Cambiar selección
+              </button>
+            </div>
+
+            <div class="w-full md:w-40 aspect-[2/3] rounded-xl overflow-hidden border border-white/10 bg-background-dark shadow-2xl">
+              <img
+                *ngIf="posterUrl"
+                [src]="posterUrl"
+                [alt]="movieTitle"
+                class="w-full h-full object-cover"
+              />
+              <div *ngIf="!posterUrl" class="w-full h-full grid place-items-center text-slate-500 font-black text-xs uppercase">
+                CINEMAX
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking details -->
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-6">
+          <h3 class="text-lg font-black mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">confirmation_number</span>
+            Booking Details
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-background-dark border border-white/10">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Date</p>
+              <p class="font-black">{{ formatDate(inicioFuncion) }}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-background-dark border border-white/10">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Time</p>
+              <p class="font-black">{{ formatTime(inicioFuncion) }}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-background-dark border border-white/10">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Seats</p>
+              <p class="font-black">{{ seatsText(12) }}</p>
+            </div>
+          </div>
+
+          <div class="mt-4 text-[11px] text-slate-500 font-bold" *ngIf="expiraEn">
+            Este carrito expira en: <span class="text-slate-300">{{ expiraEn.replace('T', ' ') }}</span>
+          </div>
+        </div>
+
+        <!-- Items list -->
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-6">
+          <h3 class="text-lg font-black mb-4">Tickets</h3>
+
+          <div *ngIf="loading" class="text-slate-400 font-bold">Cargando carrito…</div>
+
+          <div *ngIf="!loading && items.length === 0" class="text-slate-400 font-bold">
+            Tu carrito está vacío.
+            <button class="ml-2 text-primary font-black hover:underline" type="button" (click)="goHome()">Ver cartelera</button>
+          </div>
+
+          <div *ngIf="!loading && items.length > 0" class="space-y-3">
+            <div
+              *ngFor="let it of items"
+              class="flex items-center justify-between gap-3 p-4 rounded-xl bg-background-dark border border-white/10"
+            >
+              <div class="min-w-0">
+                <div class="font-black truncate">
+                  {{ it.peliculaTitulo }}
+                </div>
+                <div class="text-[11px] text-slate-500 font-bold mt-1">
+                  {{ it.cineNombre }} • {{ it.salaNombre }} •
+                  {{ it.fila }}{{ it.numero }} • {{ it.inicioFuncion.replace('T', ' ') }}
+                </div>
+              </div>
+
+              <div class="text-right">
+                <div class="text-slate-200 font-black">$ {{ money(it.precioUnitario) }}</div>
+                <div class="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">{{ it.tipo }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="lg:col-span-5">
+        <div class="rounded-2xl bg-surface-dark border border-white/10 p-6 sticky top-6">
+          <h3 class="text-lg font-black mb-6">Payment Summary</h3>
+
+          <div class="space-y-4 mb-8">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 font-bold">Tickets ({{ ticketsCount }}x)</span>
+              <span class="text-slate-200 font-black">$ {{ money(total) }}</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 font-bold">Booking Fee</span>
+              <span class="text-slate-400 font-bold">$ 0</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 font-bold">Taxes</span>
+              <span class="text-slate-400 font-bold">$ 0</span>
+            </div>
+
+            <div class="border-t border-dashed border-white/10 pt-4 mt-4">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-100 font-black text-lg">Total</span>
+                <span class="text-primary font-black text-2xl">$ {{ money(total) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <button
+              type="button"
+              (click)="proceedToPayment()"
+              [disabled]="items.length === 0"
+              class="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/30 disabled:text-white/60 text-white font-black py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 text-lg"
+            >
+              Proceed to Payment
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+
+            <button
+              type="button"
+              class="w-full bg-transparent hover:bg-white/5 text-slate-400 font-bold py-3 rounded-xl transition-all text-sm border border-white/10"
+            >
+              Apply Promo Code
+            </button>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined text-slate-500">verified_user</span>
+            <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black text-center">
+              Secure checkout powered by CINEMAX.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="mt-8">
+      <button
+        type="button"
+        (click)="backToSeats()"
+        class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-black"
+      >
+        <span class="material-symbols-outlined">keyboard_backspace</span>
+        Back to Seat Selection
+      </button>
+    </div>
+  </div>
+</div>

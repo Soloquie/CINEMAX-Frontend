@@ -126,7 +126,7 @@ export class MoviesComponent implements OnInit {
       fechaEstreno: p.fechaEstreno || this.today(),
       activa: !!p.activa,
       generoIds: (p.generos || []).map(g => g.id),
-      poster: null, // solo si cambia
+      poster: null,
     };
   }
 

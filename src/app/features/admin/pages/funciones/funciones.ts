@@ -47,7 +47,6 @@ export class FuncionesComponent implements OnInit {
   modalOpen = false;
   editingId: number | null = null;
 
-  // form (datetime-local sin segundos, lo convertimos al guardar)
   form = {
     peliculaId: 0,
     cineId: 0,
@@ -145,7 +144,7 @@ loadSalasPorCine(cineId: number): void {
       next: (list) => {
         const all = list || [];
         this.salas = all
-          .filter(s => s.activa !== false) // solo activas
+          .filter(s => s.activa !== false) 
           .map(s => ({ id: s.id, nombre: s.nombre, tipo: s.tipo, activa: s.activa }));
 
         this.salasLoading = false;
@@ -262,7 +261,6 @@ loadSalasPorCine(cineId: number): void {
   }
 
   private toLocalInput(iso: string): string {
-    // iso puede venir "2026-03-07T17:30:00"
     return iso ? iso.substring(0, 16) : '';
   }
 

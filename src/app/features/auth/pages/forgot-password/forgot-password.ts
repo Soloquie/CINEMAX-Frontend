@@ -23,12 +23,10 @@ export class ForgotPasswordComponent {
 
     this.authApi.forgotPassword({ email: this.email }).subscribe({
       next: (res) => {
-        // El backend responde genérico (seguridad), así que siempre mostramos ok.
         this.okMsg = res?.message || 'Si el correo existe, enviaremos un enlace de recuperación.';
         this.loading = false;
       },
       error: (err) => {
-        // Igual puedes mostrar el mensaje, pero no reveles existencia.
         this.errorMsg = err?.error?.message || 'No se pudo procesar la solicitud. Intenta de nuevo.';
         this.loading = false;
       },

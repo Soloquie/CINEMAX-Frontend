@@ -5,7 +5,7 @@ import { AsientosApiService, FuncionAsientoResponseDTO } from '../../../../core/
 import { AuthSessionService } from '../../../../core/services/auth-session.service';
 
 type SeatVM = FuncionAsientoResponseDTO & {
-  label: string; // e.g. A1
+  label: string; 
 };
 
 @Component({
@@ -21,18 +21,20 @@ export class AsientosComponent implements OnInit, OnDestroy {
   peliculaId!: number;
   funcionId!: number;
 
-  // datos
   seats: SeatVM[] = [];
   rows: string[] = [];
   maxCols = 0;
 
-  // grid: row -> col -> seat|null
   grid = new Map<string, (SeatVM | null)[]>();
 
-  // selección (funcionAsientoId)
+  posterUrl: string | null = null;
+  peliculaTitulo: string | null = null;
+  cineNombre: string | null = null;
+  salaNombre: string | null = null;
+  inicioFuncion: string | null = null;
+
   selected = new Set<number>();
 
-  // expiración (hold)
   holdExpiraEn: Date | null = null;
   countdownText = '';
 
@@ -52,7 +54,13 @@ export class AsientosComponent implements OnInit, OnDestroy {
     this.peliculaId = Number(this.route.snapshot.paramMap.get('id'));
     this.funcionId = Number(this.route.snapshot.paramMap.get('funcionId'));
 
-    // si no está logueado, lo mandas a login con returnUrl
+      const st: any = history.state;
+    this.posterUrl = st?.posterUrl ?? null;
+    this.peliculaTitulo = st?.peliculaTitulo ?? null;
+    this.cineNombre = st?.cineNombre ?? null;
+    this.salaNombre = st?.salaNombre ?? null;
+    this.inicioFuncion = st?.inicioFuncion ?? null;
+
     if (!this.session.isLoggedIn()) {
       this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } });
       return;
@@ -60,7 +68,6 @@ export class AsientosComponent implements OnInit, OnDestroy {
 
     this.loadSeats(true);
 
-    // polling suave para ver cambios (otros usuarios)
     this.pollTimer = setInterval(() => this.loadSeats(false), 15000);
   }
 
@@ -90,13 +97,11 @@ export class AsientosComponent implements OnInit, OnDestroy {
 
     const id = seat.funcionAsientoId;
 
-    // si está selected => release
     if (this.selected.has(id)) {
       this.pending = true;
       this.asientosApi.release(this.funcionId, [id]).subscribe({
         next: () => {
           this.selected.delete(id);
-          // recargar para reflejar estado real
           this.loadSeats(false);
           this.pending = false;
         },
@@ -108,7 +113,6 @@ export class AsientosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // si está disponible => hold
     if (seat.estado === 'DISPONIBLE') {
       this.pending = true;
       this.asientosApi.hold(this.funcionId, [id]).subscribe({
@@ -149,12 +153,18 @@ export class AsientosComponent implements OnInit, OnDestroy {
     });
   }
 
-  confirmSelection(): void {
-    // placeholder: aquí iría el "checkout/compra"
-    // por ahora solo mostramos que está listo
-    if (this.selected.size === 0) return;
-    alert(`Asientos seleccionados: ${this.selectedSeatLabels().join(', ')}`);
-  }
+confirmSelection(): void {
+  if (this.selected.size === 0 || this.pending) return;
+  this.router.navigate(['/carrito'], {
+    state: {
+      posterUrl: this.posterUrl,
+      peliculaTitulo: this.peliculaTitulo,
+      cineNombre: this.cineNombre,
+      salaNombre: this.salaNombre,
+      inicioFuncion: this.inicioFuncion,
+    },
+  });
+}
 
   // --------- load + build grid ----------
   private loadSeats(resetError: boolean): void {
@@ -168,7 +178,6 @@ export class AsientosComponent implements OnInit, OnDestroy {
           label: `${s.fila}${s.numero}`,
         }));
 
-        // sincroniza selection con lo que el backend dice "mio"
         this.selected.clear();
         let expMin: Date | null = null;
 
@@ -285,7 +294,6 @@ export class AsientosComponent implements OnInit, OnDestroy {
   }
 
   private extractError(e: any): string {
-    // backend suele devolver {message: "..."} o string
     return e?.error?.message || e?.error || e?.message || '';
   }
 }

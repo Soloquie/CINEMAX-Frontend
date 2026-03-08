@@ -18,7 +18,6 @@ export class CinesComponent implements OnInit {
 
   salas: SalaResponseDTO[] = [];
 
-  // ---- Modales ----
   cineModalOpen = false;
   cineEditingId: number | null = null;
   cineForm: CineUpsertDTO = { nombre: '', ciudad: '', direccion: '', activo: true };
@@ -32,7 +31,7 @@ export class CinesComponent implements OnInit {
 
   filasText = 'A,B,C,D,E';
   vipFilasText = '';
-  discapacidadText = ''; // formato: A1,A2,B3
+  discapacidadText = '';
   asientosPorFila = 10;
   tipoDefault: TipoAsiento = 'STANDARD';
   desactivarFuera = true;
@@ -68,7 +67,6 @@ export class CinesComponent implements OnInit {
         this.cines = list || [];
         this.loading = false;
 
-        // autoseleccionar el primero
         if (!this.selectedCine && this.cines.length) {
           this.selectCine(this.cines[0]);
         }
@@ -281,7 +279,6 @@ next: () => {
       .filter(Boolean);
   }
 
-  // formato input: "A1,A2,B3" -> [{fila:'A',numero:1},...]
   private parseDiscapacidad(text: string): AsientoPosDTO[] {
     const raw = this.csvToList(text);
     const out: AsientoPosDTO[] = [];
@@ -308,10 +305,8 @@ private loadAsientos(salaId: number): void {
     next: (list) => {
       this.asientos = list || [];
 
-      // filas únicas ordenadas (A, B, C...)
       const filas = Array.from(new Set(this.asientos.map(a => (a.fila || '').toUpperCase()))).sort();
 
-      // max número de asiento
       const maxN = this.asientos.reduce((m, a) => Math.max(m, Number(a.numero || 0)), 0);
 
       this.gridRows = filas;
@@ -334,14 +329,14 @@ private loadAsientos(salaId: number): void {
 seatClass(fila: string, col: number): string {
   const a = this.seatMap.get(`${fila}-${col}`);
 
-  if (!a) return 'bg-white/5 border-white/10 text-slate-600'; // vacío (si faltan)
+  if (!a) return 'bg-white/5 border-white/10 text-slate-600'; 
 
-  if (!a.activo) return 'bg-slate-800/60 border-white/10 text-slate-500'; // desactivado
+  if (!a.activo) return 'bg-slate-800/60 border-white/10 text-slate-500'; 
 
   if (a.tipo === 'VIP') return 'bg-primary/20 border-primary/30 text-primary';
   if (a.tipo === 'DISCAPACIDAD') return 'bg-blue-500/20 border-blue-400/30 text-blue-200';
 
-  return 'bg-green-500/10 border-green-500/20 text-green-200'; // STANDARD
+  return 'bg-green-500/10 border-green-500/20 text-green-200';
 }
 
 seatTooltip(fila: string, col: number): string {
