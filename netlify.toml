@@ -3,12 +3,13 @@
   publish = "dist/cinemax-frontend/browser"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
   from = "/api/*"
   to = "http://cinemax-backend-env.eba-qvyazdgq.us-east-2.elasticbeanstalk.com/api/:splat"
   status = 200
   force = true
+  headers = {X-Forwarded-Proto = "https"}
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
