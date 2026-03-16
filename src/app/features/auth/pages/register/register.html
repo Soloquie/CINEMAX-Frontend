@@ -1,82 +1,228 @@
 <div class="relative min-h-screen w-full flex items-center justify-center p-6">
-<div class="fixed inset-0 z-0">
-<img alt="Cinematic theater interior" class="w-full h-full object-cover scale-105 blur-sm brightness-[0.3]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc"/>
-<div class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/60 to-background-dark"></div>
-</div>
-<div class="relative z-10 w-full max-w-[560px] my-12">
-<div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-<div class="flex flex-col items-center mb-8">
-<div class="flex items-center gap-2 text-primary mb-2">
-<span class="material-symbols-outlined text-4xl font-bold">confirmation_number</span>
-<h1 class="text-3xl font-black tracking-tighter uppercase">CINEMAX</h1>
-</div>
-<h2 class="text-xl font-bold text-white uppercase tracking-wider">Create your account</h2>
-<p class="text-slate-400 text-xs font-medium mt-1 tracking-wide uppercase">Join the premier cinema experience</p>
-</div>
-<form class="space-y-5" (ngSubmit)="onSubmit()" #f="ngForm"><div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-<div class="space-y-2">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">First Name</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">person</span>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm" name="nombre" [(ngModel)]="model.nombre" required />
-</div>
-</div>
-<div class="space-y-2">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Last Name</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">person_add</span>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm" name="apellido" [(ngModel)]="model.apellido" required />
-</div>
-</div>
-</div>
-<div class="space-y-2">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Date of Birth</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">calendar_today</span>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm" name="fechaNacimiento" [(ngModel)]="model.fechaNacimiento" required type="date" />
-</div>
-</div>
-<div class="space-y-2">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">mail</span>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm" name="email" [(ngModel)]="model.email" required type="email" />
-</div>
-</div>
-<div class="space-y-2">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Phone Number</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">call</span>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm" name="telefono" [(ngModel)]="model.telefono" required type="tel" />
-</div>
-</div>
-<div class="space-y-2">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Password</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">lock</span>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-12 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm" name="password" [(ngModel)]="model.password" required type="password" />
-<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300" type="button">
-<span class="material-symbols-outlined text-lg">visibility</span>
-</button>
-</div>
-</div>
-<div class="pt-4">
-<button class="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-primary/30 active:scale-[0.98]" type="submit">
-                            Sign Up
-                        </button>
-</div>
-</form>
-<div class="mt-8 pt-6 border-t border-white/5 text-center">
-<p class="text-slate-400 text-sm">
-                        Already have an account? 
-<a class="text-primary font-bold hover:underline ml-1 inline-block" routerLink="/auth/login">
-  Sign In
-</a></p>
-</div>
-</div>
-<div class="flex items-center justify-center gap-2 mt-8 text-slate-500">
-<span class="material-symbols-outlined text-sm">shield_lock</span>
-<span class="text-[10px] font-bold uppercase tracking-[0.2em]">Secure Registration System</span>
-</div>
-</div>
+  <!-- BACKGROUND -->
+  <div class="fixed inset-0 z-0">
+    <img
+      alt="Cinematic theater interior"
+      class="w-full h-full object-cover scale-105 blur-sm brightness-[0.3]"
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG4fGbhldkDBrUbyu2g9c4kun6oQ1IDmWe0CUW86OkJORINYJt7-d9j28hqA8OxuK-EmZZ3Pa7Z-Q7H6eA1H5RjgpHAMWtPSoO17_tuyq1URrceZSB6MkcjaXCrofusgTdQ7pkF18yDt4deX1G7CS2z3jZWC-WxjIVOUtUagArVnlZ2gpricdRPJb8_IZ6lgD9Mv3ncpXbeEy2_mop-jxTMNM6D1xNYM9uUA6MeHHUhPNHBG5ft3_OsEIHL1ZvoPZ8INvmhPTC8Nc"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/60 to-background-dark"></div>
+  </div>
+
+  <!-- CARD -->
+  <div class="relative z-10 w-full max-w-[560px] my-12">
+    <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
+      <!-- BRAND (CLICK -> HOME) -->
+      <div class="flex flex-col items-center mb-8">
+        <button
+          type="button"
+          routerLink="/peliculas"
+          class="flex items-center gap-2 text-primary mb-2 hover:opacity-90 transition-opacity"
+          title="Volver al inicio"
+        >
+          <span class="material-symbols-outlined text-4xl font-bold">confirmation_number</span>
+          <span class="text-3xl font-black tracking-tighter uppercase">CINEMAX</span>
+        </button>
+
+        <h2 class="text-xl font-bold text-white uppercase tracking-wider">Create your account</h2>
+        <p class="text-slate-400 text-xs font-medium mt-1 tracking-wide uppercase">
+          Join the premier cinema experience
+        </p>
+      </div>
+
+      <!-- ERROR GENERAL -->
+      <div
+        *ngIf="errorMsg"
+        class="mb-5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200"
+      >
+        {{ errorMsg }}
+      </div>
+
+      <form class="space-y-5" (ngSubmit)="onSubmit()" #f="ngForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- FIRST NAME -->
+          <div class="space-y-2">
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+              First Name
+            </label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+                person
+              </span>
+              <input
+                class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+                [ngClass]="hasFieldError('nombre') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+                name="nombre"
+                [(ngModel)]="model.nombre"
+                required
+                placeholder="Your name"
+              />
+            </div>
+            <p *ngIf="hasFieldError('nombre')" class="text-[11px] font-bold text-red-300 ml-1">
+              {{ fieldError('nombre') }}
+            </p>
+          </div>
+
+          <!-- LAST NAME -->
+          <div class="space-y-2">
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+              Last Name
+            </label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+                person_add
+              </span>
+              <input
+                class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+                [ngClass]="hasFieldError('apellido') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+                name="apellido"
+                [(ngModel)]="model.apellido"
+                required
+                placeholder="Your last name"
+              />
+            </div>
+            <p *ngIf="hasFieldError('apellido')" class="text-[11px] font-bold text-red-300 ml-1">
+              {{ fieldError('apellido') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- DOB -->
+        <div class="space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            Date of Birth
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+              calendar_today
+            </span>
+            <input
+              class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+              [ngClass]="hasFieldError('fechaNacimiento') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+              name="fechaNacimiento"
+              [(ngModel)]="model.fechaNacimiento"
+              required
+              type="date"
+            />
+          </div>
+          <p *ngIf="hasFieldError('fechaNacimiento')" class="text-[11px] font-bold text-red-300 ml-1">
+            {{ fieldError('fechaNacimiento') }}
+          </p>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            Email Address
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+              mail
+            </span>
+            <input
+              class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+              [ngClass]="hasFieldError('email') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+              name="email"
+              [(ngModel)]="model.email"
+              required
+              type="email"
+              placeholder="name@example.com"
+            />
+          </div>
+          <p *ngIf="hasFieldError('email')" class="text-[11px] font-bold text-red-300 ml-1">
+            {{ fieldError('email') }}
+          </p>
+        </div>
+
+        <!-- PHONE -->
+        <div class="space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            Phone Number
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+              call
+            </span>
+            <input
+              class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+              [ngClass]="hasFieldError('telefono') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+              name="telefono"
+              [(ngModel)]="model.telefono"
+              required
+              type="tel"
+              placeholder="3001234567"
+            />
+          </div>
+          <p *ngIf="hasFieldError('telefono')" class="text-[11px] font-bold text-red-300 ml-1">
+            {{ fieldError('telefono') }}
+          </p>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            Password
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+              lock
+            </span>
+
+            <input
+              class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-12 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+              [ngClass]="hasFieldError('password') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+              name="password"
+              [(ngModel)]="model.password"
+              required
+              [type]="passwordInputType"
+              placeholder="••••••••"
+            />
+
+            <button
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              type="button"
+              (click)="togglePasswordVisibility()"
+              title="Mostrar/Ocultar contraseña"
+            >
+              <span class="material-symbols-outlined text-lg">
+                {{ passwordVisible ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+
+          <p *ngIf="hasFieldError('password')" class="text-[11px] font-bold text-red-300 ml-1">
+            {{ fieldError('password') }}
+          </p>
+
+          <!-- TIP -->
+          <p class="text-[11px] text-slate-500 font-bold ml-1">
+            Mín. 8 caracteres, mayúscula, minúscula, número y símbolo.
+          </p>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="pt-4">
+          <button
+            class="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-primary/30 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+            type="submit"
+            [disabled]="loading"
+          >
+            {{ loading ? 'Creating...' : 'Sign Up' }}
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-8 pt-6 border-t border-white/5 text-center">
+        <p class="text-slate-400 text-sm">
+          Already have an account?
+          <a class="text-primary font-bold hover:underline ml-1 inline-block" routerLink="/auth/login"> Sign In </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center gap-2 mt-8 text-slate-500">
+      <span class="material-symbols-outlined text-sm">shield_lock</span>
+      <span class="text-[10px] font-bold uppercase tracking-[0.2em]">Secure Registration System</span>
+    </div>
+  </div>
 </div>
