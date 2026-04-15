@@ -61,17 +61,20 @@ export class AdminLayoutComponent implements OnInit {
           const roles = data?.roles || [];
           this.isAdmin = roles.includes('ADMIN') || roles.includes('ROLE_ADMIN');
         },
-        error: (err) => {
-          if (err?.status === 401) {
-            this.router.navigate(['/auth/login']);
-            return;
-          }
+    error: (err) => {
+      this.me = null;
+      this.initials = 'AD';
+      this.isAdmin = false;
 
-          this.meError = 'No se pudo cargar la información del usuario.';
-          this.me = null;
-          this.initials = 'AD';
-          this.isAdmin = true;  
-        }
+      if (err?.status === 401 || err?.status === 403) {
+        this.session.clear();
+        this.router.navigate(['/auth/login']);
+        return;
+      }
+
+      this.meError = 'No se pudo validar el rol del usuario.';
+      this.router.navigate(['/peliculas']);
+    }
       });
   }
 

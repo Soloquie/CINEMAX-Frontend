@@ -12,7 +12,7 @@
   <!-- CARD -->
   <div class="relative z-10 w-full max-w-[560px] my-12">
     <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-      <!-- BRAND (CLICK -> HOME) -->
+      <!-- BRAND -->
       <div class="flex flex-col items-center mb-8">
         <button
           type="button"
@@ -103,6 +103,7 @@
               [(ngModel)]="model.fechaNacimiento"
               required
               type="date"
+              [max]="todayString"
             />
           </div>
           <p *ngIf="hasFieldError('fechaNacimiento')" class="text-[11px] font-bold text-red-300 ml-1">
@@ -194,9 +195,45 @@
             {{ fieldError('password') }}
           </p>
 
-          <!-- TIP -->
           <p class="text-[11px] text-slate-500 font-bold ml-1">
             Mín. 8 caracteres, mayúscula, minúscula, número y símbolo.
+          </p>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            Confirm Password
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+              lock_reset
+            </span>
+
+            <input
+              class="w-full bg-white/5 border rounded-xl py-3 pl-11 pr-12 focus:ring-2 focus:ring-primary/50 transition-all outline-none text-slate-100 placeholder:text-slate-600 text-sm"
+              [ngClass]="hasFieldError('confirmPassword') ? 'border-red-500/40 focus:border-red-500' : 'border-white/10 focus:border-primary'"
+              name="confirmPassword"
+              [(ngModel)]="model.confirmPassword"
+              required
+              [type]="confirmPasswordInputType"
+              placeholder="••••••••"
+            />
+
+            <button
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              type="button"
+              (click)="toggleConfirmPasswordVisibility()"
+              title="Mostrar/Ocultar confirmación"
+            >
+              <span class="material-symbols-outlined text-lg">
+                {{ confirmPasswordVisible ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+
+          <p *ngIf="hasFieldError('confirmPassword')" class="text-[11px] font-bold text-red-300 ml-1">
+            {{ fieldError('confirmPassword') }}
           </p>
         </div>
 

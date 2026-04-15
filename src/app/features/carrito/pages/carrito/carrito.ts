@@ -107,6 +107,29 @@ export class CarritoComponent implements OnInit {
     alert('Pago: lo conectamos en el siguiente paso ');
   }
 
+  removeItem(item: CarritoItemResponseDTO): void {
+  if (!item?.funcionAsientoId) return;
+
+  this.loading = true;
+  this.errorMsg = '';
+
+  this.api.removeSeats([item.funcionAsientoId]).subscribe({
+    next: () => {
+      this.loadCart();
+    },
+    error: (err: HttpErrorResponse) => {
+      this.loading = false;
+
+      if (err.status === 401) {
+        this.router.navigate(['/auth/login']);
+        return;
+      }
+
+      this.errorMsg = err?.error?.message || 'No se pudo eliminar el ítem del carrito.';
+    },
+  });
+}
+
   seatsText(limit = 10): string {
     const seats = this.items.map(i => `${i.fila}${i.numero}`);
     const shown = seats.slice(0, limit).join(', ');

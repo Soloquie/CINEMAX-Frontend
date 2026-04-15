@@ -28,6 +28,10 @@ export interface CarritoResponseDTO {
   items: CarritoItemResponseDTO[];
 }
 
+export interface RemoveCartItemsRequestDTO {
+  funcionAsientoIds: number[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class CarritoApiService {
   private readonly base = `${environment.apiBaseUrl}/api/carrito`;
@@ -36,5 +40,10 @@ export class CarritoApiService {
 
   getMyCart(): Observable<CarritoResponseDTO> {
     return this.http.get<CarritoResponseDTO>(this.base);
+  }
+
+    removeSeats(ids: number[]): Observable<{ message: string }> {
+    const body: RemoveCartItemsRequestDTO = { funcionAsientoIds: ids };
+    return this.http.post<{ message: string }>(`${this.base}/remove-seats`, body);
   }
 }
