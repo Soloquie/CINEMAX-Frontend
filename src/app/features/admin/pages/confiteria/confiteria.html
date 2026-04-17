@@ -1,0 +1,483 @@
+<div class="h-full flex flex-col min-h-0">
+  <!-- HEADER -->
+  <header class="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-surface-dark/30 backdrop-blur-sm">
+    <div>
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+        Administración / Confitería
+      </p>
+      <h1 class="text-2xl font-black tracking-tighter text-slate-100">
+        Gestión de productos de confitería
+      </h1>
+    </div>
+
+    <button
+      type="button"
+      (click)="openCreate()"
+      class="bg-primary text-white px-6 py-3 rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all"
+    >
+      Añadir producto
+    </button>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="flex-1 overflow-auto p-8">
+    <div class="max-w-7xl w-full mx-auto space-y-8">
+      <!-- intro -->
+      <div>
+        <p class="text-sm text-slate-500 mt-2">
+          Administra catálogo, precios, imágenes y stock de productos del cine.
+        </p>
+      </div>
+
+      <!-- stats -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.05]">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+            Total productos
+          </p>
+          <h2 class="text-3xl font-black text-slate-100 tracking-tighter">{{ totalProductos }}</h2>
+          <p class="text-xs text-slate-500 mt-3">Catálogo cargado en el módulo de confitería.</p>
+        </div>
+
+        <div class="bg-surface-container p-6 rounded-2xl border border-white/[0.05]">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+            Activos
+          </p>
+          <h2 class="text-3xl font-black text-emerald-400 tracking-tighter">{{ activosCount }}</h2>
+          <p class="text-xs text-slate-500 mt-3">Productos visibles para venta.</p>
+        </div>
+
+        <div class="bg-surface-container p-6 rounded-2xl border border-white/[0.05]">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+            Stock bajo
+          </p>
+          <h2 class="text-3xl font-black text-primary tracking-tighter">{{ lowStockCount }}</h2>
+          <p class="text-xs text-slate-500 mt-3">Productos que requieren atención.</p>
+        </div>
+
+        <div class="bg-surface-container p-6 rounded-2xl border border-white/[0.05]">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+            Unidades en inventario
+          </p>
+          <h2 class="text-3xl font-black text-slate-100 tracking-tighter">{{ totalStockUnits }}</h2>
+          <p class="text-xs text-slate-500 mt-3">Suma total de unidades disponibles.</p>
+        </div>
+      </div>
+
+      <!-- filters + table -->
+      <section class="bg-surface-container-low rounded-2xl border border-white/[0.05] overflow-hidden">
+        <div class="p-6 border-b border-white/5 bg-white/[0.02]">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div class="lg:col-span-2 relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">
+                search
+              </span>
+              <input
+                type="text"
+                [ngModel]="q"
+                (ngModelChange)="onSearch($event)"
+                class="w-full bg-surface-container-low border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-200 focus:outline-none focus:border-primary"
+                placeholder="Buscar por nombre, SKU o descripción..."
+              />
+            </div>
+
+            <select
+              [ngModel]="categoriaFiltro"
+              (ngModelChange)="onCategoriaFilter($event)"
+              class="cinemax-select w-full"
+            >
+              <option value="ALL">Todas las categorías</option>
+              <option *ngFor="let c of categorias" [ngValue]="c">{{ categoryLabel(c) }}</option>
+            </select>
+
+            <select
+              [ngModel]="estadoFiltro"
+              (ngModelChange)="onEstadoFilter($event)"
+              class="cinemax-select w-full"
+            >
+              <option value="ALL">Todos los estados</option>
+              <option value="ACTIVE">Activos</option>
+              <option value="LOW">Stock bajo</option>
+              <option value="INACTIVE">Inactivos</option>
+            </select>
+          </div>
+        </div>
+
+        <div *ngIf="errorMsg" class="px-6 pt-5 text-sm font-bold text-red-400">
+          {{ errorMsg }}
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-highest/30">
+                <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+                  Producto
+                </th>
+                <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+                  Categoría
+                </th>
+                <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+                  Precio
+                </th>
+                <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+                  Stock
+                </th>
+                <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+                  Estado
+                </th>
+                <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-right">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-white/[0.05]">
+              <tr *ngIf="loading">
+                <td colspan="6" class="px-6 py-8 text-center text-slate-400 font-bold">
+                  Cargando productos...
+                </td>
+              </tr>
+
+              <tr *ngIf="!loading && filtered.length === 0">
+                <td colspan="6" class="px-6 py-8 text-center text-slate-400 font-bold">
+                  No hay productos para mostrar.
+                </td>
+              </tr>
+
+              <tr
+                *ngFor="let p of filtered"
+                class="hover:bg-white/[0.02] transition-colors group"
+              >
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-4 min-w-[280px]">
+                    <div class="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden border border-white/5 shrink-0">
+                      <img
+                        *ngIf="p.imagenUrl"
+                        [src]="p.imagenUrl"
+                        [alt]="p.nombre"
+                        class="w-full h-full object-cover"
+                      />
+                      <div
+                        *ngIf="!p.imagenUrl"
+                        class="w-full h-full grid place-items-center text-slate-500"
+                      >
+                        <span class="material-symbols-outlined">image</span>
+                      </div>
+                    </div>
+
+                    <div class="min-w-0">
+                      <p class="text-sm font-bold text-slate-200 truncate">{{ p.nombre }}</p>
+                      <p class="text-[10px] text-slate-500 uppercase tracking-[0.15em] mt-1">
+                        {{ p.sku }}
+                      </p>
+                      <p class="text-[11px] text-slate-500 mt-1 description-clamp">
+                        {{ p.descripcion || 'Sin descripción.' }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4">
+                  <span
+                    class="px-3 py-1 text-[10px] font-black uppercase rounded-full border"
+                    [ngClass]="categoryClass(p.categoria)"
+                  >
+                    {{ categoryLabel(p.categoria) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 text-sm font-medium text-slate-300">
+                  $ {{ money(p.precio) }}
+                </td>
+
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-slate-200">{{ p.stock }}</div>
+                  <div class="text-[10px] text-slate-500 uppercase tracking-[0.15em]">
+                    mínimo: {{ p.stockMinimo }}
+                  </div>
+                </td>
+
+                <td class="px-6 py-4">
+                  <span class="flex items-center gap-2 text-xs font-bold" [ngClass]="stockStatusClass(p)">
+                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="stockDotClass(p)"></span>
+                    {{ stockStatusLabel(p) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 text-right">
+                  <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      type="button"
+                      (click)="openStockModal(p)"
+                      class="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-amber-300"
+                      title="Ajustar stock"
+                    >
+                      <span class="material-symbols-outlined text-lg">inventory_2</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      (click)="openEdit(p)"
+                      class="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white"
+                      title="Editar"
+                    >
+                      <span class="material-symbols-outlined text-lg">edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      (click)="deleteProducto(p)"
+                      class="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-red-400"
+                      title="Eliminar"
+                    >
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-6 bg-white/[0.01] border-t border-white/5 flex items-center justify-between">
+          <p class="text-xs text-slate-500">
+            Mostrando {{ filtered.length }} de {{ productos.length }} productos
+          </p>
+          <div class="text-xs text-slate-500">CINEMAX Admin</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- MODAL PRODUCTO -->
+  <div *ngIf="modalOpen" class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl bg-[#111217] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-black text-slate-100 tracking-tight">
+            {{ editingId ? 'Editar producto' : 'Crear producto' }}
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">
+            Completa la información del producto de confitería.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="h-10 w-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 grid place-items-center"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <div
+          *ngIf="modalErrorMsg"
+          class="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200"
+        >
+          {{ modalErrorMsg }}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">SKU</label>
+            <input
+              [(ngModel)]="form.sku"
+              class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Nombre</label>
+            <input
+              [(ngModel)]="form.nombre"
+              class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Categoría</label>
+            <select [(ngModel)]="form.categoria" class="cinemax-select w-full">
+              <option *ngFor="let c of categorias" [ngValue]="c">{{ categoryLabel(c) }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Precio</label>
+            <input
+              [(ngModel)]="form.precio"
+              type="number"
+              min="0"
+              step="0.01"
+              class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+              {{ editingId ? 'Stock actual (referencia)' : 'Stock inicial' }}
+            </label>
+            <input
+              [(ngModel)]="form.stock"
+              type="number"
+              min="0"
+              class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Stock mínimo</label>
+            <input
+              [(ngModel)]="form.stockMinimo"
+              type="number"
+              min="0"
+              class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Descripción</label>
+          <textarea
+            [(ngModel)]="form.descripcion"
+            rows="4"
+            class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-5 items-start">
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Imagen</label>
+
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onImageChange($event)"
+              class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-300"
+            />
+
+            <label class="flex items-center gap-3 pt-2 text-sm text-slate-300">
+              <input type="checkbox" [(ngModel)]="form.activo" />
+              Producto activo
+            </label>
+          </div>
+
+          <div class="w-full h-40 rounded-2xl border border-white/10 bg-surface-container-low overflow-hidden">
+            <img
+              *ngIf="imagePreview"
+              [src]="imagePreview"
+              alt="preview"
+              class="w-full h-full object-cover"
+            />
+            <div *ngIf="!imagePreview" class="w-full h-full grid place-items-center text-slate-500 text-sm font-bold">
+              Sin imagen
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-5 border-t border-white/10 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-sm font-bold"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          (click)="save()"
+          [disabled]="saving"
+          class="px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-black shadow-lg shadow-primary/20 disabled:opacity-60"
+        >
+          {{ saving ? 'Guardando...' : (editingId ? 'Actualizar producto' : 'Crear producto') }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL STOCK -->
+  <div *ngIf="stockModalOpen" class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-[#111217] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-black text-slate-100 tracking-tight">Ajustar stock</h3>
+          <p class="text-xs text-slate-500 mt-1">
+            {{ stockTarget?.nombre }} — stock actual: {{ stockTarget?.stock }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="closeStockModal()"
+          class="h-10 w-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 grid place-items-center"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div
+          *ngIf="stockErrorMsg"
+          class="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200"
+        >
+          {{ stockErrorMsg }}
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+            Tipo de movimiento
+          </label>
+          <select [(ngModel)]="stockForm.tipo" class="cinemax-select w-full">
+            <option value="ENTRADA">Entrada</option>
+            <option value="SALIDA">Salida</option>
+            <option value="AJUSTE">Ajuste</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+            {{ stockForm.tipo === 'AJUSTE' ? 'Nuevo stock final' : 'Cantidad' }}
+          </label>
+          <input
+            [(ngModel)]="stockForm.cantidad"
+            type="number"
+            min="0"
+            class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Motivo</label>
+          <textarea
+            [(ngModel)]="stockForm.motivo"
+            rows="3"
+            class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-primary"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="px-6 py-5 border-t border-white/10 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="closeStockModal()"
+          class="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-sm font-bold"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          (click)="saveStock()"
+          [disabled]="stockSaving"
+          class="px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-black shadow-lg shadow-primary/20 disabled:opacity-60"
+        >
+          {{ stockSaving ? 'Guardando...' : 'Actualizar stock' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

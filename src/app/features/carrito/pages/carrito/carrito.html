@@ -150,7 +150,7 @@
                 </div>
                 <div class="text-[11px] text-slate-500 font-bold mt-1">
                   {{ it.cineNombre }} • {{ it.salaNombre }} •
-                  {{ it.fila }}{{ it.numero }} • {{ it.inicioFuncion.replace('T', ' ') }}
+                  {{ it.fila }}{{ it.numero }} • {{ it.inicioFuncion ? it.inicioFuncion.replace('T', ' ') : '—' }}
                 </div>
               </div>
 

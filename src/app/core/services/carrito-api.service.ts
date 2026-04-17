@@ -3,33 +3,39 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface RemoveCartItemsRequestDTO {
+  funcionAsientoIds: number[];
+}
 export interface CarritoItemResponseDTO {
   itemId: number;
   tipo: string;
 
-  funcionAsientoId: number;
-  funcionId: number;
+  // asientos
+  funcionAsientoId?: number | null;
+  funcionId?: number | null;
+  peliculaTitulo?: string | null;
+  salaNombre?: string | null;
+  cineNombre?: string | null;
+  inicioFuncion?: string | null;
+  fila?: string | null;
+  numero?: number | null;
 
-  peliculaTitulo: string;
-  salaNombre: string;
-  cineNombre: string;
-  inicioFuncion: string; // ISO
+  // productos
+  productoId?: number | null;
+  productoNombre?: string | null;
+  productoDescripcion?: string | null;
+  productoImagenUrl?: string | null;
+  cantidad?: number | null;
 
-  fila: string;
-  numero: number;
-
-  precioUnitario: number; // BigDecimal -> number
+  precioUnitario: number;
+  subtotal?: number | null;
 }
 
 export interface CarritoResponseDTO {
   carritoId: number;
   estado: string;
-  expiraEn: string | null; // ISO
+  expiraEn: string | null;
   items: CarritoItemResponseDTO[];
-}
-
-export interface RemoveCartItemsRequestDTO {
-  funcionAsientoIds: number[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -42,7 +48,7 @@ export class CarritoApiService {
     return this.http.get<CarritoResponseDTO>(this.base);
   }
 
-    removeSeats(ids: number[]): Observable<{ message: string }> {
+  removeSeats(ids: number[]): Observable<{ message: string }> {
     const body: RemoveCartItemsRequestDTO = { funcionAsientoIds: ids };
     return this.http.post<{ message: string }>(`${this.base}/remove-seats`, body);
   }

@@ -8,6 +8,7 @@ import { MoviesComponent } from './pages/movies/movies';
 import { CinesComponent } from './pages/cines/cines';
 import { FuncionesComponent } from './pages/funciones/funciones';
 import { FormsModule } from '@angular/forms';
+import { ConfiteriaComponent } from './pages/confiteria/confiteria';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { FormsModule } from '@angular/forms';
     MoviesComponent,
     CinesComponent,
     FuncionesComponent,
+    ConfiteriaComponent,
   ],
   imports: [
     CommonModule,

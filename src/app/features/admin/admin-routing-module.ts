@@ -6,6 +6,7 @@ import { MoviesComponent } from './pages/movies/movies';
 import { CinesComponent } from './pages/cines/cines';
 import { FuncionesComponent } from './pages/funciones/funciones';
 import { AdminGuard } from '../../core/guards/admin.guard';
+import { ConfiteriaComponent } from './pages/confiteria/confiteria';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'movies', component: MoviesComponent },
       { path: 'cines', component:   CinesComponent },
       { path: 'funciones', component: FuncionesComponent },
+      { path: 'confiteria', component: ConfiteriaComponent },
     ],
   },
 ];

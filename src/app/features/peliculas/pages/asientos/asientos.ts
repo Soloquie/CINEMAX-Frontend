@@ -155,8 +155,9 @@ export class AsientosComponent implements OnInit, OnDestroy {
 
 confirmSelection(): void {
   if (this.selected.size === 0 || this.pending) return;
-  this.router.navigate(['/carrito'], {
+  this.router.navigate(['/confiteria'], {
     state: {
+      funcionId: this.funcionId,
       posterUrl: this.posterUrl,
       peliculaTitulo: this.peliculaTitulo,
       cineNombre: this.cineNombre,

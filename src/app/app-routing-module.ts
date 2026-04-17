@@ -29,6 +29,11 @@ const routes: Routes = [
     path: 'carrito',
     loadChildren: () => import('./features/carrito/carrito-module').then(m => m.CarritoModule),
   },
+{
+  path: 'confiteria',
+  loadChildren: () =>
+    import('./features/confiteria/confiteria-module').then(m => m.ConfiteriaModule),
+},
   { path: '**', redirectTo: 'peliculas' },
 ];
 
