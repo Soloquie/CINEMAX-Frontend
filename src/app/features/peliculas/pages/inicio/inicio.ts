@@ -230,4 +230,9 @@ goBuyTickets(peliculaId?: number | null): void {
   if (!peliculaId) return;
   this.router.navigate(['/peliculas', peliculaId, 'tickets']);
 }
+
+goMovieDetail(peliculaId?: number | null): void {
+  if (!peliculaId) return;
+  this.router.navigate(['/peliculas', peliculaId, 'detalle']);
+}
 }

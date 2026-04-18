@@ -25,6 +25,11 @@ const routes: Routes = [
   loadChildren: () =>
     import('./features/peliculas/pages/tickets/tickets-module').then(m => m.TicketsModule),
 },
+{
+  path: 'peliculas/:id/detalle',
+  loadChildren: () =>
+    import('./features/peliculas/pages/detalle/detalle-module').then(m => m.DetalleModule),
+},
   {
     path: 'carrito',
     loadChildren: () => import('./features/carrito/carrito-module').then(m => m.CarritoModule),

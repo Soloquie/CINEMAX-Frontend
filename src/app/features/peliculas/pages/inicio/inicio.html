@@ -25,9 +25,11 @@
     <div class="flex flex-1 max-w-2xl mx-8 gap-4">
       <!-- CINES -->
       <div class="relative flex-[0.4]">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
-          >location_on</span
+        <span
+          class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
         >
+          location_on
+        </span>
         <select
           class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-8 text-sm focus:ring-2 focus:ring-primary/50 text-slate-200 appearance-none cursor-pointer"
           [(ngModel)]="selectedCineId"
@@ -40,20 +42,23 @@
         </select>
         <span
           class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
-          >expand_more</span
         >
+          expand_more
+        </span>
       </div>
 
       <!-- SEARCH -->
       <div class="relative flex-1">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          search
+        </span>
         <input
           #q
-            class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500"
-            placeholder="Search movies..."
-            type="text"
-            [value]="query"
-            (input)="onSearchInput(q.value)"
+          class="w-full bg-surface-dark border-none rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500"
+          placeholder="Search movies..."
+          type="text"
+          [value]="query"
+          (input)="onSearchInput(q.value)"
         />
       </div>
     </div>
@@ -100,7 +105,8 @@
         >
           <div class="p-4 border-b border-white/10">
             <p class="font-black text-slate-100 truncate">
-              {{ (userMe?.nombre || userSummary?.nombre || '') }} {{ (userMe?.apellido || userSummary?.apellido || '') }}
+              {{ (userMe?.nombre || userSummary?.nombre || '') }}
+              {{ (userMe?.apellido || userSummary?.apellido || '') }}
             </p>
             <p class="text-xs text-slate-400 truncate">{{ userMe?.email || userSummary?.email }}</p>
             <p class="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">
@@ -109,7 +115,6 @@
           </div>
 
           <div class="p-2">
-            
             <button
               *ngIf="isAdmin()"
               type="button"
@@ -119,12 +124,12 @@
               <span class="material-symbols-outlined align-middle text-base mr-2">admin_panel_settings</span>
               Panel de administración
             </button>
+
             <button
               type="button"
               (click)="logout()"
               class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm font-bold text-slate-200"
             >
-            
               <span class="material-symbols-outlined align-middle text-base mr-2">logout</span>
               Cerrar sesión
             </button>
@@ -136,7 +141,7 @@
 
   <!-- MAIN -->
   <main class="flex-1">
-    <!-- HERO (usa la primera película en cartelera si existe) -->
+    <!-- HERO -->
     <section class="relative w-full aspect-[21/9] min-h-[550px] flex items-end px-6 py-12 lg:px-16 lg:py-24">
       <div class="absolute inset-0 z-0">
         <img
@@ -168,21 +173,22 @@
         </p>
 
         <div class="flex flex-wrap gap-4">
-<button
-  class="flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/30"
-  type="button"
-  (click)="goBuyTickets(heroMovie?.id)"
->
-  <span class="material-symbols-outlined">confirmation_number</span>
-  Buy Tickets
-</button>
+          <button
+            class="flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/30"
+            type="button"
+            (click)="goBuyTickets(heroMovie?.id)"
+          >
+            <span class="material-symbols-outlined">confirmation_number</span>
+            Buy Tickets
+          </button>
 
           <button
             class="flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-white/20 transition-all"
             type="button"
+            (click)="goMovieDetail(heroMovie?.id)"
           >
-            <span class="material-symbols-outlined">play_circle</span>
-            Trailer
+            <span class="material-symbols-outlined">info</span>
+            Movie Details
           </button>
         </div>
       </div>
@@ -222,14 +228,25 @@
               <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
 
               <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
-              <button
-                  class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  type="button"
-                  (click)="goBuyTickets(movie.id)"
-                >
-                <span class="material-symbols-outlined text-sm">confirmation_number</span>
-                GET TICKETS
-              </button>
+                <div class="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2"
+                    type="button"
+                    (click)="goBuyTickets(movie.id)"
+                  >
+                    <span class="material-symbols-outlined text-sm">confirmation_number</span>
+                    GET TICKETS
+                  </button>
+
+                  <button
+                    class="w-full bg-white/10 backdrop-blur-md text-white border border-white/20 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
+                    type="button"
+                    (click)="goMovieDetail(movie.id)"
+                  >
+                    <span class="material-symbols-outlined text-sm">info</span>
+                    VIEW DETAILS
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -278,7 +295,19 @@
                 [alt]="movie.titulo"
                 [src]="movie.posterUrl || 'https://via.placeholder.com/400x600?text=CINEMAX'"
               />
+
+              <div class="absolute bottom-0 left-0 right-0 p-3">
+                <button
+                  class="w-full bg-white/10 backdrop-blur-md text-white border border-white/20 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
+                  type="button"
+                  (click)="goMovieDetail(movie.id)"
+                >
+                  <span class="material-symbols-outlined text-sm">info</span>
+                  VIEW DETAILS
+                </button>
+              </div>
             </div>
+
             <h4 class="font-bold text-sm uppercase tracking-tight truncate">{{ movie.titulo }}</h4>
             <p class="text-[10px] text-slate-500 font-bold mt-1">COMING SOON</p>
           </div>
