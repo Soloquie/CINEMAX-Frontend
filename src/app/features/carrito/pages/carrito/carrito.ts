@@ -3,7 +3,11 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { CarritoApiService, CarritoResponseDTO, CarritoItemResponseDTO } from '../../../../core/services/carrito-api.service';
+import {
+  CarritoApiService,
+  CarritoResponseDTO,
+  CarritoItemResponseDTO
+} from '../../../../core/services/carrito-api.service';
 
 @Component({
   selector: 'app-carrito',
@@ -20,16 +24,23 @@ export class CarritoComponent implements OnInit {
 
   posterUrl: string | null = null;
 
-  ticketsCount = 0;
-  total = 0;
-
   movieTitle = '—';
   cineNombre = '—';
   salaNombre = '—';
   inicioFuncion: string | null = null;
 
-  // expiración
   expiraEn: string | null = null;
+
+  // resumen separado
+  ticketItems: CarritoItemResponseDTO[] = [];
+  snackItems: CarritoItemResponseDTO[] = [];
+
+  ticketsCount = 0;
+  snacksCount = 0;
+
+  ticketsTotal = 0;
+  snacksTotal = 0;
+  total = 0;
 
   constructor(
     private api: CarritoApiService,
@@ -73,10 +84,25 @@ export class CarritoComponent implements OnInit {
   }
 
   private computeSummary(): void {
-    this.ticketsCount = this.items.length;
-    this.total = this.items.reduce((acc, it) => acc + Number(it.precioUnitario ?? 0), 0);
+    this.ticketItems = this.items.filter(i => i.tipo === 'ASIENTO');
+    this.snackItems = this.items.filter(i => i.tipo === 'PRODUCTO');
 
-    if (this.items.length === 0) {
+    this.ticketsCount = this.ticketItems.length;
+    this.snacksCount = this.snackItems.reduce((acc, it) => acc + Number(it.cantidad ?? 0), 0);
+
+    this.ticketsTotal = this.ticketItems.reduce(
+      (acc, it) => acc + Number(it.subtotal ?? it.precioUnitario ?? 0),
+      0
+    );
+
+    this.snacksTotal = this.snackItems.reduce(
+      (acc, it) => acc + Number(it.subtotal ?? (Number(it.precioUnitario ?? 0) * Number(it.cantidad ?? 1))),
+      0
+    );
+
+    this.total = this.ticketsTotal + this.snacksTotal;
+
+    if (this.ticketItems.length === 0) {
       this.movieTitle = '—';
       this.cineNombre = '—';
       this.salaNombre = '—';
@@ -84,11 +110,11 @@ export class CarritoComponent implements OnInit {
       return;
     }
 
-    const first = this.items[0];
-    this.movieTitle = first.peliculaTitulo || '—';
-    this.cineNombre = first.cineNombre || '—';
-    this.salaNombre = first.salaNombre || '—';
-    this.inicioFuncion = first.inicioFuncion || null;
+    const firstTicket = this.ticketItems[0];
+    this.movieTitle = firstTicket.peliculaTitulo || '—';
+    this.cineNombre = firstTicket.cineNombre || '—';
+    this.salaNombre = firstTicket.salaNombre || '—';
+    this.inicioFuncion = firstTicket.inicioFuncion || null;
   }
 
   goBack(): void {
@@ -104,53 +130,82 @@ export class CarritoComponent implements OnInit {
   }
 
   proceedToPayment(): void {
-    alert('Pago: lo conectamos en el siguiente paso ');
+    alert('Pago: lo conectamos en el siguiente paso');
   }
 
   removeItem(item: CarritoItemResponseDTO): void {
-  if (!item?.funcionAsientoId) return;
+    this.loading = true;
+    this.errorMsg = '';
 
-  this.loading = true;
-  this.errorMsg = '';
+    if (item.tipo === 'ASIENTO' && item.funcionAsientoId) {
+      this.api.removeSeats([item.funcionAsientoId]).subscribe({
+        next: () => this.loadCart(),
+        error: (err: HttpErrorResponse) => {
+          this.loading = false;
 
-  this.api.removeSeats([item.funcionAsientoId]).subscribe({
-    next: () => {
-      this.loadCart();
-    },
-    error: (err: HttpErrorResponse) => {
-      this.loading = false;
+          if (err.status === 401) {
+            this.router.navigate(['/auth/login']);
+            return;
+          }
 
-      if (err.status === 401) {
-        this.router.navigate(['/auth/login']);
-        return;
-      }
+          this.errorMsg = err?.error?.message || 'No se pudo eliminar la boleta del carrito.';
+        },
+      });
+      return;
+    }
 
-      this.errorMsg = err?.error?.message || 'No se pudo eliminar el ítem del carrito.';
-    },
-  });
-}
+    if (item.tipo === 'PRODUCTO' && item.productoId) {
+      this.api.removeProducto(item.productoId).subscribe({
+        next: () => this.loadCart(),
+        error: (err: HttpErrorResponse) => {
+          this.loading = false;
+
+          if (err.status === 401) {
+            this.router.navigate(['/auth/login']);
+            return;
+          }
+
+          this.errorMsg = err?.error?.message || 'No se pudo eliminar el producto de confitería.';
+        },
+      });
+      return;
+    }
+
+    this.loading = false;
+  }
 
   seatsText(limit = 10): string {
-    const seats = this.items.map(i => `${i.fila}${i.numero}`);
+    const seats = this.ticketItems.map(i => `${i.fila || ''}${i.numero ?? ''}`).filter(Boolean);
     const shown = seats.slice(0, limit).join(', ');
     return seats.length > limit ? `${shown} +${seats.length - limit}` : (shown || '—');
   }
 
   isMultiFuncion(): boolean {
-    const ids = new Set(this.items.map(i => i.funcionId));
+    const ids = new Set(this.ticketItems.map(i => i.funcionId).filter(Boolean));
     return ids.size > 1;
   }
 
   formatDate(iso: string | null): string {
     if (!iso) return '—';
     const d = new Date(iso);
-    return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: '2-digit' });
+    return d.toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit'
+    });
   }
 
   formatTime(iso: string | null): string {
     if (!iso) return '—';
     const d = new Date(iso);
-    return d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString('es-CO', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  formatIso(iso?: string | null): string {
+    return iso ? iso.replace('T', ' ') : '—';
   }
 
   money(n: any): string {

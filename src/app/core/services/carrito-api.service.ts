@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 export interface RemoveCartItemsRequestDTO {
   funcionAsientoIds: number[];
 }
+
 export interface CarritoItemResponseDTO {
   itemId: number;
   tipo: string;
@@ -51,5 +52,9 @@ export class CarritoApiService {
   removeSeats(ids: number[]): Observable<{ message: string }> {
     const body: RemoveCartItemsRequestDTO = { funcionAsientoIds: ids };
     return this.http.post<{ message: string }>(`${this.base}/remove-seats`, body);
+  }
+
+  removeProducto(productoId: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.base}/productos/${productoId}`);
   }
 }
