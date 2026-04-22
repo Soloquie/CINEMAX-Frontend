@@ -23,6 +23,16 @@ export interface PeliculaDetailDTO {
   generos?: GeneroDTO[];
 }
 
+export interface PageResponseDTO<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+}
+
 export interface PeliculaCardDTO {
   id: number;
   titulo: string;
@@ -38,10 +48,38 @@ export class CatalogoApiService {
 
   constructor(private http: HttpClient) {}
 
-  listarCines(ciudad?: string): Observable<CinePublicDTO[]> {
-    let params = new HttpParams();
+  listarCines(
+    ciudad?: string,
+    page = 0,
+    size = 10
+  ): Observable<PageResponseDTO<CinePublicDTO>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
     if (ciudad) params = params.set('ciudad', ciudad);
-    return this.http.get<CinePublicDTO[]>(`${this.base}/cines`, { params });
+
+    return this.http.get<PageResponseDTO<CinePublicDTO>>(`${this.base}/cines`, { params });
+  }
+
+  listarPeliculas(
+    q?: string,
+    generoId?: number,
+    desde?: string,
+    hasta?: string,
+    page = 0,
+    size = 12
+  ): Observable<PageResponseDTO<PeliculaCardDTO>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    if (q) params = params.set('q', q);
+    if (generoId != null) params = params.set('generoId', generoId);
+    if (desde) params = params.set('desde', desde);
+    if (hasta) params = params.set('hasta', hasta);
+
+    return this.http.get<PageResponseDTO<PeliculaCardDTO>>(`${this.base}/peliculas`, { params });
   }
 
   enCartelera(): Observable<PeliculaCardDTO[]> {
@@ -54,6 +92,6 @@ export class CatalogoApiService {
   }
 
   detallePelicula(id: number): Observable<PeliculaDetailDTO> {
-  return this.http.get<PeliculaDetailDTO>(`${this.base}/peliculas/${id}`);
-}
+    return this.http.get<PeliculaDetailDTO>(`${this.base}/peliculas/${id}`);
+  }
 }

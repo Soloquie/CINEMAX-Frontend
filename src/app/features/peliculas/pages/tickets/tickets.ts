@@ -60,9 +60,9 @@ export class TicketsComponent implements OnInit {
   }
 
   private loadCines(): void {
-    this.catalogoApi.listarCines().subscribe({
-      next: (cines) => {
-        this.cines = cines || [];
+    this.catalogoApi.listarCines(undefined, 0, 50).subscribe({
+      next: (resp) => {
+        this.cines = resp.content || [];
         this.recomputeCinesDisponibles();
       },
       error: () => {
@@ -180,9 +180,8 @@ export class TicketsComponent implements OnInit {
           cineNombre: this.selectedFuncion.cineNombre,
           salaNombre: this.selectedFuncion.salaNombre,
           inicioFuncion: this.selectedFuncion.inicio,
-          },
-        }
-
+        },
+      }
     );
   }
 

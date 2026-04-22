@@ -24,9 +24,15 @@ export interface UserSummaryDTO {
 
 export interface AuthResponseDTO {
   accessToken: string;
-  tokenType: string;   // "Bearer"
-  expiresIn: number;   // 3600
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+  refreshExpiresIn: number;
   user: UserSummaryDTO;
+}
+
+export interface RefreshTokenRequestDTO {
+  refreshToken: string;
 }
 
 export interface RegisterRequestDTO {
@@ -76,5 +82,9 @@ export class AuthApiService {
 
   resetPassword(payload: ResetPasswordRequestDTO) {
   return this.http.post<MessageResponseDTO>(`${this.base}/reset-password`, payload);
+}
+
+refresh(payload: RefreshTokenRequestDTO): Observable<AuthResponseDTO> {
+  return this.http.post<AuthResponseDTO>(`${this.base}/refresh`, payload);
 }
 }

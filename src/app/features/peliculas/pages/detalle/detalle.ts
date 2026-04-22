@@ -56,9 +56,9 @@ export class DetalleComponent implements OnInit {
       },
     });
 
-    this.catalogoApi.listarCines().subscribe({
-      next: (c) => {
-        this.cines = c || [];
+    this.catalogoApi.listarCines(undefined, 0, 50).subscribe({
+      next: (resp) => {
+        this.cines = resp.content || [];
         this.recomputeCinesDisponibles();
       },
       error: () => {

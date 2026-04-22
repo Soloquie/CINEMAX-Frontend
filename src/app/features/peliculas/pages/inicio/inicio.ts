@@ -33,7 +33,7 @@ export class InicioComponent implements OnInit {
 
   // auth/menu
   menuOpen = false;
-  userSummary: any = null;       
+  userSummary: any = null;
   userMe: UserMeDTO | null = null;
 
   private searchTimer: any;
@@ -47,7 +47,7 @@ export class InicioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userSummary = this.session.getUser(); 
+    this.userSummary = this.session.getUser();
     this.loadHome();
     this.loadUserIfLogged();
   }
@@ -57,9 +57,9 @@ export class InicioComponent implements OnInit {
     this.loading = true;
     this.errorMsg = '';
 
-    this.catalogoApi.listarCines().subscribe({
-      next: (cines) => {
-        this.cines = cines || [];
+    this.catalogoApi.listarCines(undefined, 0, 50).subscribe({
+      next: (resp) => {
+        this.cines = resp.content || [];
         if (!this.selectedCineId && this.cines.length > 0) this.selectedCineId = this.cines[0].id;
         this.loadMoviesAndFunciones();
       },
@@ -175,7 +175,7 @@ export class InicioComponent implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
-    this.router.navigate(['/carrito']); 
+    this.router.navigate(['/carrito']);
   }
 
   toggleMenu(): void {
@@ -190,49 +190,50 @@ export class InicioComponent implements OnInit {
     this.router.navigate(['/peliculas']);
   }
 
-private loadUserIfLogged(): void {
-  if (!this.session.isLoggedIn()) return;
+  private loadUserIfLogged(): void {
+    if (!this.session.isLoggedIn()) return;
 
-  this.userApi.me().subscribe({
-    next: (me) => (this.userMe = me),
-    error: () => {
-      this.session.clear();
-      this.userSummary = null;
-      this.userMe = null;
-    },
-  });
-}
+    this.userApi.me().subscribe({
+      next: (me) => (this.userMe = me),
+      error: () => {
+        this.userMe = null;
+      },
+    });
+  }
+
+  isAdmin(): boolean {
+    const roles = this.userMe?.roles || this.userSummary?.roles || [];
+    return roles.includes('ADMIN') || roles.includes('ROLE_ADMIN');
+  }
+
+  goAdminPanel(): void {
+    this.menuOpen = false;
+    this.router.navigate(['/admin']);
+  }
+
+  goBuyTickets(peliculaId?: number | null): void {
+    if (!peliculaId) return;
+    this.router.navigate(['/peliculas', peliculaId, 'tickets']);
+  }
+
+  goMovieDetail(peliculaId?: number | null): void {
+    if (!peliculaId) return;
+    this.router.navigate(['/peliculas', peliculaId, 'detalle']);
+  }
 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('#user-menu')) this.menuOpen = false;
+  onDocClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+
+    const insideMenu = !!target.closest('#user-menu');
+    if (!insideMenu) this.menuOpen = false;
   }
 
   private formatLocalDate(d: Date): string {
     const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const m = `${d.getMonth() + 1}`.padStart(2, '0');
+    const day = `${d.getDate()}`.padStart(2, '0');
     return `${y}-${m}-${day}`;
   }
-
-  isAdmin(): boolean {
-  const roles = (this.userMe?.roles || this.userSummary?.roles || []) as string[];
-  return roles.includes('ADMIN') || roles.includes('ROLE_ADMIN');
-}
-
-goAdminPanel(): void {
-  this.menuOpen = false;
-  this.router.navigate(['/admin']);
-}
-
-goBuyTickets(peliculaId?: number | null): void {
-  if (!peliculaId) return;
-  this.router.navigate(['/peliculas', peliculaId, 'tickets']);
-}
-
-goMovieDetail(peliculaId?: number | null): void {
-  if (!peliculaId) return;
-  this.router.navigate(['/peliculas', peliculaId, 'detalle']);
-}
 }
