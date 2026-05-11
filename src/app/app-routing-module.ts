@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { PagoResultadoComponent } from './features/pagos/pages/pago-resultado/pago-resultado';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'peliculas' },
@@ -38,6 +39,11 @@ const routes: Routes = [
   path: 'confiteria',
   loadChildren: () =>
     import('./features/confiteria/confiteria-module').then(m => m.ConfiteriaModule),
+  
+},
+{
+  path: 'pago/resultado',
+  component: PagoResultadoComponent
 },
   { path: '**', redirectTo: 'peliculas' },
 ];

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PagoApiService } from '../../../../core/services/pago-api.service';
 
 import {
   CarritoApiService,
@@ -45,7 +46,8 @@ export class CarritoComponent implements OnInit {
   constructor(
     private api: CarritoApiService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private pagoApi: PagoApiService
   ) {}
 
   ngOnInit(): void {
@@ -130,8 +132,28 @@ export class CarritoComponent implements OnInit {
   }
 
   proceedToPayment(): void {
-    alert('Pago: lo conectamos en el siguiente paso');
-  }
+    if (this.loading) return;
+
+    this.errorMsg = '';
+    this.loading = true;
+
+    this.pagoApi.crearCheckout().subscribe({
+      next: (checkout) => {
+        this.loading = false;
+
+        if (!checkout?.initPoint) {
+          this.errorMsg = 'No se pudo iniciar el checkout de Mercado Pago.';
+          return;
+        }
+
+        window.location.href = checkout.initPoint;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err?.error?.message || 'No se pudo iniciar el pago.';
+      }
+    });
+  }                           
 
   removeItem(item: CarritoItemResponseDTO): void {
     this.loading = true;

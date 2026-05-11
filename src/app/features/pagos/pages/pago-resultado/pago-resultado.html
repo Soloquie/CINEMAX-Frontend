@@ -1,0 +1,130 @@
+<section class="payment-result-page">
+
+  <div class="result-card" *ngIf="loading">
+    <div class="loader"></div>
+    <h1>Verificando tu pago...</h1>
+    <p>Estamos consultando el estado de la transacción.</p>
+  </div>
+
+  <div class="result-card error" *ngIf="!loading && errorMsg">
+    <div class="icon">!</div>
+    <h1>No pudimos verificar el pago</h1>
+    <p>{{ errorMsg }}</p>
+
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="volverInicio()">
+        Volver a películas
+      </button>
+      <button type="button" class="btn-primary" (click)="irCarrito()">
+        Volver al carrito
+      </button>
+    </div>
+  </div>
+
+  <div class="result-card success" *ngIf="!loading && !errorMsg && esPagoConfirmado()">
+    <div class="icon">✓</div>
+    <span class="eyebrow">Pago confirmado</span>
+    <h1>¡Compra realizada con éxito!</h1>
+
+    <p>
+      Tu compra fue confirmada correctamente. Ya puedes consultar tus boletas.
+    </p>
+
+    <div class="summary">
+      <div>
+        <span>Referencia</span>
+        <strong>{{ estado?.referencia }}</strong>
+      </div>
+
+      <div>
+        <span>Código de venta</span>
+        <strong>{{ estado?.codigoVenta || '—' }}</strong>
+      </div>
+
+      <div>
+        <span>Estado del pago</span>
+        <strong>{{ estado?.estadoPago }}</strong>
+      </div>
+
+      <div>
+        <span>Estado de la venta</span>
+        <strong>{{ estado?.estadoVenta || '—' }}</strong>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-primary" (click)="volverInicio()">
+        Volver a películas
+      </button>
+    </div>
+  </div>
+
+  <div class="result-card error" *ngIf="!loading && !errorMsg && esPagoRechazado()">
+    <div class="icon">×</div>
+    <span class="eyebrow">Pago no confirmado</span>
+    <h1>No se pudo completar la compra</h1>
+
+    <p>
+      {{ estado?.mensajeError || 'El pago fue rechazado o la venta no pudo confirmarse.' }}
+    </p>
+
+    <div class="summary">
+      <div>
+        <span>Referencia</span>
+        <strong>{{ estado?.referencia }}</strong>
+      </div>
+
+      <div>
+        <span>Estado del pago</span>
+        <strong>{{ estado?.estadoPago }}</strong>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="volverInicio()">
+        Volver a películas
+      </button>
+      <button type="button" class="btn-primary" (click)="irCarrito()">
+        Intentar de nuevo
+      </button>
+    </div>
+  </div>
+
+  <div class="result-card pending" *ngIf="!loading && !errorMsg && estado && !esPagoConfirmado() && !esPagoRechazado()">
+    <div class="icon">…</div>
+    <span class="eyebrow">Pago en proceso</span>
+    <h1>Tu pago está siendo procesado</h1>
+
+   <div
+  class="result-card pending"
+  *ngIf="!loading && !errorMsg && estado as e">
+
+  <div class="icon">…</div>
+  <span class="eyebrow">Pago en proceso</span>
+  <h1>Tu pago está siendo procesado</h1>
+
+    <p>
+        Estamos esperando la confirmación final de Mercado Pago.
+    </p>
+
+    <div class="summary">
+        <div>
+        <span>Referencia</span>
+        <strong>{{ e.referencia }}</strong>
+        </div>
+
+        <div>
+        <span>Estado del pago</span>
+        <strong>{{ e.estadoPago }}</strong>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn-secondary" (click)="volverInicio()">
+        Volver a películas
+        </button>
+    </div>
+    </div>
+  </div>
+
+</section>

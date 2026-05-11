@@ -5,10 +5,12 @@ import { AuthInterceptor } from '../app/core/services/auth-interceptor';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { HttpClientModule } from '@angular/common/http';
+import { PagoResultadoComponent } from './features/pagos/pages/pago-resultado/pago-resultado';
 
 @NgModule({
   declarations: [
-    App
+    App,
+    PagoResultadoComponent
   ],
   imports: [
     BrowserModule,
