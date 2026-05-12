@@ -6,6 +6,7 @@ import {
   PagoApiService,
   PagoEstadoResponseDTO
 } from '../../../../core/services/pago-api.service';
+import { ComprobanteApiService } from '../../../../core/services/comprobante-api.service';
 
 @Component({
   selector: 'app-pago-resultado',
@@ -20,22 +21,38 @@ export class PagoResultadoComponent implements OnInit, OnDestroy {
 
   referencia = '';
   paymentId = '';
+  sessionId = '';
   statusMercadoPago = '';
+  cancelado = false;
 
   estado: PagoEstadoResponseDTO | null = null;
+
+  descargandoPdf = false;
+  enviandoCorreo = false;
+  mensajeAccion = '';
+  errorAccion = '';
 
   private pollingSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private pagoApi: PagoApiService
+    private pagoApi: PagoApiService,
+    private comprobanteApi: ComprobanteApiService
   ) {}
 
   ngOnInit(): void {
     this.referencia = this.route.snapshot.queryParamMap.get('referencia') || '';
     this.paymentId = this.route.snapshot.queryParamMap.get('payment_id') || '';
+    this.sessionId = this.route.snapshot.queryParamMap.get('session_id') || '';
     this.statusMercadoPago = this.route.snapshot.queryParamMap.get('status') || '';
+    this.cancelado = this.route.snapshot.queryParamMap.get('cancelado') === 'true';
+
+    if (this.cancelado) {
+      this.loading = false;
+      this.errorMsg = 'El pago fue cancelado antes de finalizar.';
+      return;
+    }
 
     if (!this.referencia) {
       this.loading = false;
@@ -45,10 +62,6 @@ export class PagoResultadoComponent implements OnInit, OnDestroy {
 
     this.consultarEstado();
 
-    /*
-     * Se consulta varias veces porque el webhook de Mercado Pago puede tardar unos segundos
-     * en confirmar la venta en el backend.
-     */
     this.pollingSub = interval(3000)
       .pipe(
         switchMap(() => this.pagoApi.consultarEstado(this.referencia)),
@@ -89,7 +102,6 @@ export class PagoResultadoComponent implements OnInit, OnDestroy {
 
   private debeSeguirConsultando(estado: PagoEstadoResponseDTO): boolean {
     const estadoPago = (estado.estadoPago || '').toUpperCase();
-
     return estadoPago === 'PENDIENTE' || estadoPago === 'APROBADO';
   }
 
@@ -102,11 +114,81 @@ export class PagoResultadoComponent implements OnInit, OnDestroy {
     return estadoPago === 'RECHAZADO' || estadoPago === 'FALLIDO_CONFIRMACION';
   }
 
+  descargarComprobantePdf(): void {
+    this.limpiarMensajesAccion();
+
+    const ventaId = this.estado?.ventaId;
+
+    if (!ventaId) {
+      this.errorAccion = 'No se encontró la venta asociada al pago.';
+      return;
+    }
+
+    this.descargandoPdf = true;
+
+    this.comprobanteApi.descargarPdf(ventaId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        const nombreArchivo = this.estado?.codigoVenta
+          ? `comprobante-cinemax-${this.estado.codigoVenta}.pdf`
+          : `comprobante-cinemax-${ventaId}.pdf`;
+
+        link.href = url;
+        link.download = nombreArchivo;
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+
+        this.descargandoPdf = false;
+        this.mensajeAccion = 'Comprobante descargado correctamente.';
+      },
+      error: (err) => {
+        this.descargandoPdf = false;
+        this.errorAccion = err?.error?.message || 'No se pudo descargar el comprobante.';
+      }
+    });
+  }
+
+  enviarComprobanteCorreo(): void {
+    this.limpiarMensajesAccion();
+
+    const ventaId = this.estado?.ventaId;
+
+    if (!ventaId) {
+      this.errorAccion = 'No se encontró la venta asociada al pago.';
+      return;
+    }
+
+    this.enviandoCorreo = true;
+
+    this.comprobanteApi.enviarPorCorreo(ventaId).subscribe({
+      next: () => {
+        this.enviandoCorreo = false;
+        this.mensajeAccion = 'Comprobante enviado correctamente al correo.';
+      },
+      error: (err) => {
+        this.enviandoCorreo = false;
+        this.errorAccion = err?.error?.message || 'No se pudo enviar el comprobante al correo.';
+      }
+    });
+  }
+
+  irMisCompras(): void {
+    this.router.navigate(['/mis-compras']);
+  }
+
   volverInicio(): void {
     this.router.navigate(['/peliculas']);
   }
 
   irCarrito(): void {
     this.router.navigate(['/carrito']);
+  }
+
+  private limpiarMensajesAccion(): void {
+    this.mensajeAccion = '';
+    this.errorAccion = '';
   }
 }

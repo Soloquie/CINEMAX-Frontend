@@ -45,6 +45,7 @@ const routes: Routes = [
   path: 'pago/resultado',
   component: PagoResultadoComponent
 },
+
   { path: '**', redirectTo: 'peliculas' },
 ];
 

@@ -221,6 +221,11 @@ export class InicioComponent implements OnInit {
     this.router.navigate(['/peliculas', peliculaId, 'detalle']);
   }
 
+  goMisCompras(): void {
+  this.menuOpen = false;
+  this.router.navigate(['/mis-compras']);
+}
+
   @HostListener('document:click', ['$event'])
   onDocClick(event: MouseEvent): void {
     const target = event.target as HTMLElement | null;

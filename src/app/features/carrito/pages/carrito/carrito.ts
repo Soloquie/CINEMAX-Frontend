@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PagoApiService } from '../../../../core/services/pago-api.service';
+import { PagoApiService, ProveedorPago } from '../../../../core/services/pago-api.service';
 
 import {
   CarritoApiService,
@@ -131,29 +131,32 @@ export class CarritoComponent implements OnInit {
     this.location.back();
   }
 
-  proceedToPayment(): void {
-    if (this.loading) return;
+  procesandoPago = false;
+  errorPago = '';
 
-    this.errorMsg = '';
-    this.loading = true;
+  proceedToPayment(proveedor: ProveedorPago): void {
+    if (this.procesandoPago) return;
 
-    this.pagoApi.crearCheckout().subscribe({
+    this.errorPago = '';
+    this.procesandoPago = true;
+
+    this.pagoApi.crearCheckout(proveedor).subscribe({
       next: (checkout) => {
-        this.loading = false;
+        this.procesandoPago = false;
 
         if (!checkout?.initPoint) {
-          this.errorMsg = 'No se pudo iniciar el checkout de Mercado Pago.';
+          this.errorPago = 'No se pudo iniciar el checkout de pago.';
           return;
         }
 
         window.location.href = checkout.initPoint;
       },
       error: (err) => {
-        this.loading = false;
-        this.errorMsg = err?.error?.message || 'No se pudo iniciar el pago.';
+        this.procesandoPago = false;
+        this.errorPago = err?.error?.message || 'No se pudo iniciar el pago.';
       }
     });
-  }                           
+  }                          
 
   removeItem(item: CarritoItemResponseDTO): void {
     this.loading = true;

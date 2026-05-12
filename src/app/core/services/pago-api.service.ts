@@ -3,20 +3,31 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export type ProveedorPago = 'MERCADO_PAGO' | 'STRIPE';
+
 /**
- * DTO que representa la respuesta del backend al crear un checkout de pago.
- * El campo initPoint contiene la URL de Mercado Pago a la que se debe redirigir al usuario.
+ * DTO enviado al backend para indicar con qué proveedor se desea iniciar el checkout.
+ */
+export interface CrearCheckoutPagoRequestDTO {
+  proveedor: ProveedorPago;
+}
+
+/**
+ * DTO que representa la respuesta del backend al crear un checkout.
+ * Sirve tanto para Mercado Pago como para Stripe.
  */
 export interface CheckoutPagoResponseDTO {
   referencia: string;
-  preferenceId: string;
+  proveedor: string;
+  montoCentavos: number;
+  moneda: string;
+  checkoutId: string;
   initPoint: string;
   publicKey: string;
 }
 
 /**
  * DTO que representa el estado actual de un pago consultado desde el backend.
- * Se usa después de que Mercado Pago redirige al usuario de regreso al frontend.
  */
 export interface PagoEstadoResponseDTO {
   referencia: string;
@@ -37,11 +48,12 @@ export class PagoApiService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Crea el checkout de pago a partir del carrito activo del usuario autenticado.
-   * No recibe body porque el backend toma el carrito desde el usuario autenticado.
+   * Crea un checkout de pago según el proveedor seleccionado.
+   * El backend calcula el total desde el carrito activo del usuario autenticado.
    */
-  crearCheckout(): Observable<CheckoutPagoResponseDTO> {
-    return this.http.post<CheckoutPagoResponseDTO>(`${this.base}/checkout`, {});
+  crearCheckout(proveedor: ProveedorPago): Observable<CheckoutPagoResponseDTO> {
+    const body: CrearCheckoutPagoRequestDTO = { proveedor };
+    return this.http.post<CheckoutPagoResponseDTO>(`${this.base}/checkout`, body);
   }
 
   /**
@@ -50,4 +62,4 @@ export class PagoApiService {
   consultarEstado(referencia: string): Observable<PagoEstadoResponseDTO> {
     return this.http.get<PagoEstadoResponseDTO>(`${this.base}/estado/${referencia}`);
   }
-}
+} 

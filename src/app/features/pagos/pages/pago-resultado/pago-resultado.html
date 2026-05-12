@@ -15,6 +15,7 @@
       <button type="button" class="btn-secondary" (click)="volverInicio()">
         Volver a películas
       </button>
+
       <button type="button" class="btn-primary" (click)="irCarrito()">
         Volver al carrito
       </button>
@@ -24,6 +25,7 @@
   <div class="result-card success" *ngIf="!loading && !errorMsg && esPagoConfirmado()">
     <div class="icon">✓</div>
     <span class="eyebrow">Pago confirmado</span>
+
     <h1>¡Compra realizada con éxito!</h1>
 
     <p>
@@ -52,8 +54,36 @@
       </div>
     </div>
 
-    <div class="actions">
-      <button type="button" class="btn-primary" (click)="volverInicio()">
+    <p class="feedback-message success-message" *ngIf="mensajeAccion">
+      {{ mensajeAccion }}
+    </p>
+
+    <p class="feedback-message error-message" *ngIf="errorAccion">
+      {{ errorAccion }}
+    </p>
+
+    <div class="actions actions-comprobante">
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="descargandoPdf || !estado?.ventaId"
+        (click)="descargarComprobantePdf()">
+        {{ descargandoPdf ? 'Descargando...' : 'Descargar comprobante PDF' }}
+      </button>
+
+      <button
+        type="button"
+        class="btn-secondary"
+        [disabled]="enviandoCorreo || !estado?.ventaId"
+        (click)="enviarComprobanteCorreo()">
+        {{ enviandoCorreo ? 'Enviando...' : 'Enviar comprobante al correo' }}
+      </button>
+
+      <button type="button" class="btn-secondary" (click)="irMisCompras()">
+        Ver mis compras
+      </button>
+
+      <button type="button" class="btn-secondary" (click)="volverInicio()">
         Volver a películas
       </button>
     </div>
@@ -62,6 +92,7 @@
   <div class="result-card error" *ngIf="!loading && !errorMsg && esPagoRechazado()">
     <div class="icon">×</div>
     <span class="eyebrow">Pago no confirmado</span>
+
     <h1>No se pudo completar la compra</h1>
 
     <p>
@@ -84,46 +115,42 @@
       <button type="button" class="btn-secondary" (click)="volverInicio()">
         Volver a películas
       </button>
+
       <button type="button" class="btn-primary" (click)="irCarrito()">
         Intentar de nuevo
       </button>
     </div>
   </div>
 
-  <div class="result-card pending" *ngIf="!loading && !errorMsg && estado && !esPagoConfirmado() && !esPagoRechazado()">
+  <div
+    class="result-card pending"
+    *ngIf="!loading && !errorMsg && estado && !esPagoConfirmado() && !esPagoRechazado()">
+
     <div class="icon">…</div>
     <span class="eyebrow">Pago en proceso</span>
+
     <h1>Tu pago está siendo procesado</h1>
 
-   <div
-  class="result-card pending"
-  *ngIf="!loading && !errorMsg && estado as e">
-
-  <div class="icon">…</div>
-  <span class="eyebrow">Pago en proceso</span>
-  <h1>Tu pago está siendo procesado</h1>
-
     <p>
-        Estamos esperando la confirmación final de Mercado Pago.
+      Estamos esperando la confirmación final del proveedor de pagos.
     </p>
 
     <div class="summary">
-        <div>
+      <div>
         <span>Referencia</span>
-        <strong>{{ e.referencia }}</strong>
-        </div>
+        <strong>{{ estado.referencia }}</strong>
+      </div>
 
-        <div>
+      <div>
         <span>Estado del pago</span>
-        <strong>{{ e.estadoPago }}</strong>
-        </div>
+        <strong>{{ estado.estadoPago }}</strong>
+      </div>
     </div>
 
     <div class="actions">
-        <button type="button" class="btn-secondary" (click)="volverInicio()">
+      <button type="button" class="btn-secondary" (click)="volverInicio()">
         Volver a películas
-        </button>
-    </div>
+      </button>
     </div>
   </div>
 
