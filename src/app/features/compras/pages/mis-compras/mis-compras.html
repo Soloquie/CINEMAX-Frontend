@@ -1,0 +1,130 @@
+<section class="mis-compras-page">
+
+  <div class="page-shell">
+
+    <header class="page-hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Historial de compras</span>
+        <h1>Mis compras</h1>
+        <p>
+          Consulta tus compras confirmadas, descarga el comprobante PDF
+          o vuelve a enviarlo al correo registrado.
+        </p>
+      </div>
+
+      <button type="button" class="btn-secondary back-button" (click)="volverPeliculas()">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver a películas
+      </button>
+    </header>
+
+    <div class="feedback-message success-message" *ngIf="successMsg">
+      {{ successMsg }}
+    </div>
+
+    <div class="feedback-message error-message" *ngIf="errorMsg">
+      {{ errorMsg }}
+    </div>
+
+    <div class="result-card loading-card" *ngIf="loading">
+      <div class="loader"></div>
+      <span class="eyebrow">Cargando historial</span>
+      <h2>Buscando tus compras...</h2>
+      <p>Estamos consultando las ventas asociadas a tu cuenta.</p>
+    </div>
+
+    <div class="result-card empty-card" *ngIf="!loading && compras.length === 0">
+      <div class="icon">🎟</div>
+      <span class="eyebrow">Sin compras registradas</span>
+      <h2>Aún no tienes compras</h2>
+      <p>
+        Cuando completes una compra de boletas o confitería,
+        aparecerá en esta sección.
+      </p>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="volverPeliculas()">
+          Ver películas
+        </button>
+      </div>
+    </div>
+
+    <div class="compras-grid" *ngIf="!loading && compras.length > 0">
+
+      <article
+        class="compra-card"
+        *ngFor="let compra of compras; trackBy: trackByCompra">
+
+        <div class="compra-top">
+          <div class="compra-title">
+            <div class="ticket-icon">
+              <span class="material-symbols-outlined">confirmation_number</span>
+            </div>
+
+            <div>
+              <span class="eyebrow">Código de venta</span>
+              <h2>{{ compra.codigoVenta || 'Venta #' + compra.ventaId }}</h2>
+            </div>
+          </div>
+
+          <div class="badges">
+            <span class="badge venta" [ngClass]="estadoVentaClase(compra.estadoVenta)">
+              {{ compra.estadoVenta || 'SIN ESTADO' }}
+            </span>
+
+            <span class="badge pago" [ngClass]="estadoPagoClase(compra.estadoPago)">
+              Pago {{ compra.estadoPago || '—' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div>
+            <span>Referencia</span>
+            <strong>{{ compra.referenciaPago || '—' }}</strong>
+          </div>
+
+          <div>
+            <span>Total pagado</span>
+            <strong class="money">{{ formatearDinero(compra.total) }}</strong>
+          </div>
+
+          <div>
+            <span>ID de venta</span>
+            <strong>#{{ compra.ventaId }}</strong>
+          </div>
+        </div>
+
+        <div class="compra-footer">
+          <p>
+            Puedes descargar el comprobante de esta compra o reenviarlo al correo asociado a tu cuenta.
+          </p>
+
+          <div class="actions actions-comprobante">
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="descargandoPdfId === compra.ventaId"
+              (click)="descargarPdf(compra)">
+              <span class="material-symbols-outlined">picture_as_pdf</span>
+              {{ descargandoPdfId === compra.ventaId ? 'Descargando...' : 'Descargar PDF' }}
+            </button>
+
+            <button
+              type="button"
+              class="btn-secondary"
+              [disabled]="enviandoCorreoId === compra.ventaId"
+              (click)="enviarCorreo(compra)">
+              <span class="material-symbols-outlined">mail</span>
+              {{ enviandoCorreoId === compra.ventaId ? 'Enviando...' : 'Enviar al correo' }}
+            </button>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</section>

@@ -45,7 +45,10 @@ const routes: Routes = [
   path: 'pago/resultado',
   component: PagoResultadoComponent
 },
-
+{
+  path: 'mis-compras',
+  loadChildren: () => import('./features/compras/compras-module').then(m => m.ComprasModule)
+},
   { path: '**', redirectTo: 'peliculas' },
 ];
 
